@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 
 import logo from '../assets/logo.png';
 import { FaAlignJustify, ImStarEmpty, ImStarFull } from 'react-icons/all';
-import { Link } from 'react-router-dom';
 import MyModal from './modal/Modal';
 import useNetworkStatus from '../store/useNetworkStatus';
 
@@ -61,8 +60,8 @@ const Header =() => {
                             </li>
                         ))}
                         <li><a className="btn-wallet wallet-default my-auto" href="/">Home</a></li>
-                        <li><Link to="/staking">Staking</Link></li>
-                        <li><Link to="/error">Error</Link></li>
+                        {/* <li><Link to="/staking">Staking</Link></li>
+                        <li><Link to="/error">Error</Link></li> */}
                     </ul>
                     <ul className="nav-mobile">
                         <li>

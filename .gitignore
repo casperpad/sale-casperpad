@@ -10,6 +10,7 @@
 
 # production
 /build_heroku
+/build
 
 # misc
 .DS_Store

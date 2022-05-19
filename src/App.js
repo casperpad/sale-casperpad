@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Route, Switch } from 'react-router-dom';
 
 import { Provider } from 'react-redux';
@@ -32,7 +33,6 @@ function App() {
     setBinanceAddress(account);
   }, [account, chainId]);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     window.addEventListener("signer:disconnected", () => {
       setCasperAddress("");
@@ -61,6 +61,7 @@ function App() {
   }, []);
 
   return (
+    <>
     <Provider store={store}>
       <Switch>
         <Route exact path="/home">
@@ -80,6 +81,7 @@ function App() {
         </Route>
       </Switch>
     </Provider>
+    </>
   );
   
 }

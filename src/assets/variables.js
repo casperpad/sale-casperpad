@@ -7,11 +7,10 @@ import tokenSkyLogo from './img/Skybridge_Logo.png';
 
 import card_0 from './img/green_1.png';
 import card_1 from './img/green_2.png';
-import { vestingContractAddress } from '../contract_info/vestingData';
 
 const casperProjects = [
     {
-        contractAddress: 'swapperyy',
+        contractAddress: 'swappery',
         tier: 8,
         picture: tokenLogo,
         name: 'Swappery',
