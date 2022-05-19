@@ -1,12 +1,8 @@
-import {
-  Signer,
-  DeployUtil,
-  CasperClient,
-} from 'casper-js-sdk';
+import { Signer, DeployUtil, CasperClient } from "casper-js-sdk";
 
-import { utils, constants } from 'casper-js-client-helper';
+import { utils, constants } from "casper-js-client-helper";
 
-import { NODE_ADDRESS, CASPERIDO_CONTRACT_HASH, CHAIN_NAME } from './constants';
+import { NODE_ADDRESS, CASPERIDO_CONTRACT_HASH, CHAIN_NAME } from "./constants";
 
 const { DEFAULT_TTL } = constants;
 
@@ -20,9 +16,9 @@ const signDeploy = async (deploy, publicKey) => {
   );
   const signedDeploy = DeployUtil.deployFromJson(signedDeployJSON).unwrap();
   return signedDeploy;
-}
+};
 
-const contractCallFn = async({
+const contractCallFn = async ({
   nodeAddress,
   contractHash,
   publicKey,
@@ -59,7 +55,7 @@ const contractCallFn = async({
   deploy = await signDeploy(deploy, publicKey);
 
   return await client.putDeploy(deploy);
-}
+};
 
 export async function contractCallWithSigner({
   publicKey,
@@ -83,7 +79,7 @@ export async function contractCallWithSigner({
     dependencies,
   });
 
-  if(deployHash !== null) {
+  if (deployHash !== null) {
     cb && cb(deployHash);
     return deployHash;
   } else {
@@ -91,11 +87,28 @@ export async function contractCallWithSigner({
   }
 }
 
-export const format = (big) => {
-  console.log(big)
-  if (big && big.div) {
-    return big.div(10**9).toNumber() 
-  } else {
-    return big
-  }
-}
+export const installWasmFile = async ({
+  publicKey,
+  pathToContract,
+  runtimeArgs,
+  paymentAmount,
+}) => {
+  const client = new CasperClient(NODE_ADDRESS);
+
+  const file = await fetch(pathToContract);
+  const bytes = await file.arrayBuffer();
+  const contractContent = new Uint8Array(bytes);
+
+  let deploy = DeployUtil.makeDeploy(
+    new DeployUtil.DeployParams(publicKey, CHAIN_NAME),
+    DeployUtil.ExecutableDeployItem.newModuleBytes(
+      contractContent,
+      runtimeArgs
+    ),
+    DeployUtil.standardPayment(paymentAmount)
+  );
+
+  deploy = await signDeploy(deploy, publicKey);
+
+  return await client.putDeploy(deploy);
+};

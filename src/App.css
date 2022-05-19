@@ -190,11 +190,32 @@ h6 {
   vertical-align: middle;
   line-height: 1em;
 }
+.form-control {
+  width: 250px;
+}
 .form-control:focus {
   border-color: #bea069;
   box-shadow: none;
 }
 button:focus { outline: none; }
+.load-status {
+  position: absolute;
+  top: 40%;
+  width: 100%;
+  align-items: center;
+  text-align: center;
+}
+.load-status h1 {
+  margin-bottom: 0.2rem;
+}
+.load-status .claim-spinner {
+  width: 200px;
+  height: 200px;
+}
+.hide {
+  height: 0;
+  overflow: hidden;
+}
 /* end of globals */
 
 /* loading icon */
@@ -364,6 +385,7 @@ button:focus { outline: none; }
   width: 80%;
   margin-left: 10%;
   justify-content: center;
+  justify-items: center;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
 }
@@ -371,12 +393,13 @@ button:focus { outline: none; }
 @media (max-width: 1200px) {
   .projects {
     /* width: 100%; */
-    margin-left: 0;
+    margin-left: 10%;
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 @media (max-width: 768px) {
   .projects {
-    margin-left: 0;
+    margin-left: 10%;
     grid-template-columns: 1fr;
   }
   .project-title { 

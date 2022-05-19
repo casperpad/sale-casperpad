@@ -1,9 +1,10 @@
-import React, { Component, useEffect, useState, useRef } from 'react';
+/* eslint-disable eqeqeq */
+import React, { useEffect, useState, useRef } from 'react';
 
-import { BiPlus, FiPlus, BsPeople, BiMoney, BiKey, AiOutlineSchedule } from 'react-icons/all';
+import { BiMoney } from 'react-icons/all';
 import { Container, Row, Col, Table, Tabs, Tab } from 'react-bootstrap';
 import member_1 from '../../assets/img/team_member_1.jpg';
-import { useEthers, useTokenBalance } from "@usedapp/core";
+import { useEthers } from "@usedapp/core";
 import { Toast } from 'react-bootstrap';
 import Spinner from 'react-bootstrap/Spinner';
 
@@ -12,7 +13,6 @@ import {
     useVestingContractMethod, 
     useBalanceOfVesting,
     useGetUserSchedulePlain,
-    useGetParticipants,
     useGetTreasuryWallet,
     useSwprContractMethod
 } from '../../util/interact';
@@ -22,7 +22,6 @@ import {
     whitelistOfTiersLength
 } from '../../contract_info/vestingData';
 import { schedulePlain, preSaleAmount } from '../../contract_info/vestingData';
-import {whitelist} from '../../contract_info/whitelist';
 
 export default function ProjectDetail() {
     const limitPresaleAmount = preSaleAmount;
@@ -42,7 +41,6 @@ export default function ProjectDetail() {
     const currentTime = Math.round(new Date().getTime()/1000);
     const {account} = useEthers();
     const [isAdmin, setIsAdmin] = useState(false);
-    const [isOpen, setIsOpen] = useState(false);
     const [showToast, setShowToast] = useState(false);
     const [toastText, setToastText] = useState('');
     const [loading, setLoading] = useState(false);
@@ -50,17 +48,17 @@ export default function ProjectDetail() {
     
     let isScheduleLocked = [];
     let scheduleAmount = [];
-    const [ amount0, claimedAmount0, unlockTime0, isFixed0 ] = useGetUserSchedulePlain(account, 0);
-    const [ amount1, claimedAmount1, unlockTime1, isFixed1 ] = useGetUserSchedulePlain(account, 1);
-    const [ amount2, claimedAmount2, unlockTime2, isFixed2 ] = useGetUserSchedulePlain(account, 2);
-    const [ amount3, claimedAmount3, unlockTime3, isFixed3 ] = useGetUserSchedulePlain(account, 3);
-    const [ amount4, claimedAmount4, unlockTime4, isFixed4 ] = useGetUserSchedulePlain(account, 4);
-    const [ amount5, claimedAmount5, unlockTime5, isFixed5 ] = useGetUserSchedulePlain(account, 5);
-    const [ amount6, claimedAmount6, unlockTime6, isFixed6 ] = useGetUserSchedulePlain(account, 6);
-    const [ amount7, claimedAmount7, unlockTime7, isFixed7 ] = useGetUserSchedulePlain(account, 7);
-    const [ amount8, claimedAmount8, unlockTime8, isFixed8 ] = useGetUserSchedulePlain(account, 8);
-    const [ amount9, claimedAmount9, unlockTime9, isFixed9 ] = useGetUserSchedulePlain(account, 9);
-    const [ amount10, claimedAmount10, unlockTime10, isFixed10 ] = useGetUserSchedulePlain(account, 10);
+    const [ amount0, claimedAmount0 ] = useGetUserSchedulePlain(account, 0);
+    const [ amount1, claimedAmount1 ] = useGetUserSchedulePlain(account, 1);
+    const [ amount2, claimedAmount2 ] = useGetUserSchedulePlain(account, 2);
+    const [ amount3, claimedAmount3 ] = useGetUserSchedulePlain(account, 3);
+    const [ amount4, claimedAmount4 ] = useGetUserSchedulePlain(account, 4);
+    const [ amount5, claimedAmount5 ] = useGetUserSchedulePlain(account, 5);
+    const [ amount6, claimedAmount6 ] = useGetUserSchedulePlain(account, 6);
+    const [ amount7, claimedAmount7 ] = useGetUserSchedulePlain(account, 7);
+    const [ amount8, claimedAmount8 ] = useGetUserSchedulePlain(account, 8);
+    const [ amount9, claimedAmount9 ] = useGetUserSchedulePlain(account, 9);
+    const [ amount10, claimedAmount10 ] = useGetUserSchedulePlain(account, 10);
     isScheduleLocked.push(claimedAmount0);
     isScheduleLocked.push(claimedAmount1);
     isScheduleLocked.push(claimedAmount2);
@@ -85,33 +83,8 @@ export default function ProjectDetail() {
     scheduleAmount.push(amount9);
     scheduleAmount.push(amount10);
 
-    const { state: stateAddVest, send: addVest, events: getEventOfAddVest } = useVestingContractMethod("addVest");
-    function handleAddVest() {
-        addVest("0xA5664dC01BB8369EDc6116d3B267d6014681dD2F", 5000000, true);
-    }
 
-    const { state: stateSetTier, send: setTierOfAccount, events: getEventOfSetTier } = useVestingContractMethod("setTierOfAccount");
-    function handleSetTier() {
-        setTierOfAccount("0xbCeB94cF4579100B256eC7e5FdE4600631C3b0A5", 5000000);
-    }
-
-    const { state: SetTreasuryWallet, send: setTreasuryWallet, events: getEventOfSetTreasuryWallet } = useVestingContractMethod("setTreasuryWallet");
-    let treasuryWallet = useGetTreasuryWallet();
-    function handleSetTreasuryWallet() {
-       
-    }
-
-    const { state: stateAddAdmin, send: addAdmin, events: getEventAddAdmin } = useVestingContractMethod("addAdmin");
-    function handleAddAdmin() {
-        addAdmin("0xbCeB94cF4579100B256eC7e5FdE4600631C3b0A5");
-    }
-
-    const { state: stateUnlockToken, send: unlockToken, events: getEventUnlockToken } = useVestingContractMethod("unlockToken");
-    function handleUnlockToken() {
-        unlockToken();
-    }
-
-    const { state: stateClaim, send: claim, events: getEventClaim } = useVestingContractMethod("claim");
+    const { state: stateClaim, send: claim } = useVestingContractMethod("claim");
     function handleClaim(indexOfSchedule) {
         claim(indexOfSchedule);
         setLoading(true);
@@ -130,7 +103,7 @@ export default function ProjectDetail() {
         return () => { unmounted.current = false }
     }, [ stateClaim ]);
 
-    const { state: stateRelease, send: Release, events: getEventRelease } = useVestingContractMethod("release");
+    const { state: stateRelease, send: Release } = useVestingContractMethod("release");
     function handleRelease(indexOfSchedule) {
         Release(indexOfSchedule);
         setLoading(true);
@@ -151,7 +124,7 @@ export default function ProjectDetail() {
     
     const [totalPresaleAmount, setTotalPresaleAmount] = useState(0);
     let totalPresaleAmount_tmp = useBalanceOfVesting();
-    const { state: stateDeposit, send: transfer, events: getEventDeposit } = useSwprContractMethod("transfer");
+    const { send: transfer } = useSwprContractMethod("transfer");
     function handleDeposite() {
         if(limitPresaleAmount > totalPresaleAmount) {
             let amount = (limitPresaleAmount - totalPresaleAmount).toString() + '000000000000000000';
@@ -162,21 +135,7 @@ export default function ProjectDetail() {
         }
     }
 
-    const { state: stateWithdraw, send: withdraw, events: getEventWithdraw } = useVestingContractMethod("withdraw");
-    function handleWithdraw() {
-        withdraw('2542462');
-    }
-
-    const { state: stateTransferOwnersihp, send: transferOwnership, events: getEventTransferOwnership } = useVestingContractMethod("transferOwnership");
-    function handleTransferOwnership() {
-        transferOwnership('0x0ac25F05101c7821e0817F39c37e89F83bE863eE');
-    }
-
-    const { state: stateMultiSetTierOfAccount, send: multiSetTierOfAccount, events: getEventMultiSetTierOfAccount } = useVestingContractMethod("multiSetTierOfAccount");
-    function handleInitWhitelist() {
-        setToastText('Initial whitelist was already set!');
-        setShowToast(true);
-    }
+    const { state: stateMultiSetTierOfAccount } = useVestingContractMethod("multiSetTierOfAccount");
 
     useEffect( () => {
         if(stateMultiSetTierOfAccount.status == 'Success'){
@@ -191,10 +150,6 @@ export default function ProjectDetail() {
         setTotalPresaleAmount(totalPresaleAmount_tmp ? (totalPresaleAmount_tmp/10**18).toString() : 0);
         return () => { unmounted.current = false }
     }, [isAdmin_tmp, totalPresaleAmount_tmp]);
-
-    const [ testamount1, testclaimedAmount1, testunlockTime1, testisFixed1 ] = useGetUserSchedulePlain('0x9d8ae6499568552C1902FC8DB1012905265D485B', 2);
-    function getSchedule(){
-    }
 
     return (
         <>
@@ -347,35 +302,35 @@ export default function ProjectDetail() {
                                                 <tr>
                                                     <td>{index+1}</td>
                                                     {
-                                                        (isAdmin) && (
+                                                        ((isAdmin) && (
                                                             <td>{limitPresaleAmount * plain.percentage / 100}</td>
-                                                        ) || (
+                                                        )) || (
                                                             <td>{Number(scheduleAmount[index]/1000000000000000000).toString()}</td>
                                                         )
                                                     }
                                                     <td>{plain.percentage + '%'}</td>
                                                     <td>{index == 0 ? 'After TGE (' + new Date(plain.unlockTime * 1000).toLocaleString("en-US", {timeZone: "UTC"}) +')' : new Date(plain.unlockTime * 1000).toLocaleString("en-US", {timeZone: "UTC"})}</td>
                                                     {
-                                                        (isAdmin) && (
+                                                        ((isAdmin) && (
                                                             <td>{currentTime >= plain.unlockTime ? limitPresaleAmount * plain.percentage / 100 : 0}</td>
-                                                        ) || (
+                                                        )) || (
                                                             <td>{currentTime >= plain.unlockTime ? Number(scheduleAmount[index]/1000000000000000000).toString() : 0}</td>
                                                         )
                                                     }
                                                     <td>
-                                                        {(currentTime >= plain.unlockTime && isScheduleLocked[index] == 0 && whitelistOfTiers[account]) && amount1 > 0 && !isAdmin && ( loading && (<Spinner animation="border" className='claim-spinner' />) || 
+                                                        {((currentTime >= plain.unlockTime && isScheduleLocked[index] == 0 && whitelistOfTiers[account]) && amount1 > 0 && !isAdmin && ( (loading && (<Spinner animation="border" className='claim-spinner' />)) || 
                                                           (
                                                           <>
                                                             <button className="btn btn-wallet wallet-connected" onClick={ () => handleClaim(index) }> Claim </button>
                                                           </>)
-                                                        ) || (currentTime >= plain.unlockTime) && isAdmin && ( loading && (<Spinner animation="border" className='claim-spinner' />) || 
+                                                        )) || ((currentTime >= plain.unlockTime) && isAdmin && ( (loading && (<Spinner animation="border" className='claim-spinner' />)) || 
                                                         (
                                                         <>
                                                           <button className="btn btn-wallet wallet-connected" onClick={ () => handleRelease(index) }> Release </button>
                                                         </>)
-                                                      ) || (currentTime >= plain.unlockTime) && (
+                                                        )) || ((currentTime >= plain.unlockTime) && (
                                                             'unlocked'
-                                                        ) || (
+                                                        )) || (
                                                             'waiting...'
                                                         )
                                                         }
