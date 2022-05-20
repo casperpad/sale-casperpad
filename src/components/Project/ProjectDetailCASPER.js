@@ -74,6 +74,18 @@ export default function ProjectDetailCASPER({ address }) {
     setVerified(_verified);
 
     const casperpadClient = await initClient();
+
+    const promises = schedules.map(async (schedule, index) => {
+      return await casperpadClient
+        .getClaimedToken(getAccountHashString(casperAddress), address, index)
+        .catch((err) => {
+          return 0;
+        });
+    });
+
+    const claimed = await Promise.all(promises);
+    setScheduleClaimed(claimed);
+
     const [isAdmin, invests] = await Promise.all([
       casperpadClient.isAdmin(casperAddress),
       casperpadClient
@@ -88,17 +100,6 @@ export default function ProjectDetailCASPER({ address }) {
     ]);
     setIsAdmin(isAdmin);
     setInvestAmount(((invests / 10 ** 9) * csprToken) / 10 ** tokenDecimals);
-
-    const promises = schedules.map(async (schedule, index) => {
-      return await casperpadClient
-        .getClaimedToken(getAccountHashString(casperAddress), address, index)
-        .catch((err) => {
-          return 0;
-        });
-    });
-
-    const claimed = await Promise.all(promises);
-    setScheduleClaimed(claimed);
   }, [casperAddress]);
 
   useEffect(() => {
@@ -305,6 +306,7 @@ export default function ProjectDetailCASPER({ address }) {
                               )) ||
                                 (currentTime >= time &&
                                   isClaimed === 0 &&
+                                  investAmount &&
                                   verified && (
                                     <>
                                       <button
