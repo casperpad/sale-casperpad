@@ -9,6 +9,9 @@ import { whitelist as whitelistNew } from "../../contract_info/whitelistCASPER";
 import useNetworkStatus from "../../store/useNetworkStatus";
 import { initClient, getAccountHashString } from "../../xWeb3";
 
+import { CasperClient } from "casper-js-sdk";
+import { NODE_ADDRESS } from "../../xWeb3/constants";
+
 const keccak256 = require("keccak256");
 const { MerkleTree } = require("merkletreejs");
 
@@ -95,9 +98,20 @@ const BuyModal = (props) => {
         proof,
         casperAddress
       );
-      console.log(deployHash);
-      setLoading(false);
-      setIsOpenVest(true);
+      const interval = setInterval(async () => {
+        const casperClient = new CasperClient(NODE_ADDRESS);
+        const [, deployResult] = await casperClient.getDeploy(deployHash);
+        if (deployResult.execution_results[0].result.Success) {
+          clearInterval(interval);
+          setLoading(false);
+          setIsOpenVest(true);
+        } else if (deployResult.execution_results[0].result.Failure) {
+          clearInterval(interval);
+          setLoading(false);
+          setToastText("Vest failed!");
+          setShowToast(true);
+        }
+      }, 5000);
     } catch (err) {
       setLoading(false);
       setToastText("Vest failed!");

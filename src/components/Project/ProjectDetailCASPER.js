@@ -4,6 +4,10 @@ import React, { useEffect, useState } from "react";
 import { BiMoney, BiKey } from "react-icons/all";
 import { Container, Row, Col, Table, Tabs, Tab } from "react-bootstrap";
 import { Toast } from "react-bootstrap";
+import Spinner from "react-bootstrap/Spinner";
+
+import { CasperClient } from "casper-js-sdk";
+import { NODE_ADDRESS } from "../../xWeb3/constants";
 
 import { initClient, getAccountHashString } from "../../xWeb3";
 import useNetworkStatus from "../../store/useNetworkStatus";
@@ -33,6 +37,8 @@ export default function ProjectDetailCASPER({ address }) {
   const [verified, setVerified] = useState(false);
   const [projectId, setProjectId] = useState(-1);
   const [merkleRoot, setMerkleRoot] = useState("");
+  const [pending, setPending] = useState(false);
+  const [claimIndex, setClaimIndex] = useState(-1);
 
   const currentTime = new Date().getTime();
 
@@ -97,7 +103,7 @@ export default function ProjectDetailCASPER({ address }) {
 
   useEffect(() => {
     if (projectLoading === false) return;
-    setLoading(projectLoading);
+    setLoading(true);
   }, [projectLoading]);
 
   useEffect(async () => {
@@ -148,8 +154,33 @@ export default function ProjectDetailCASPER({ address }) {
   }, [loading]);
 
   const handleClaim = async (index) => {
-    const casperpadClient = await initClient();
-    await casperpadClient.claim(address, index, casperAddress);
+    setPending(true);
+    setClaimIndex(index);
+    try {
+      const casperpadClient = await initClient();
+      const deployHash = await casperpadClient.claim(
+        address,
+        index,
+        casperAddress
+      );
+      const interval = setInterval(async () => {
+        const client = new CasperClient(NODE_ADDRESS);
+        const [, deployResult] = await client.getDeploy(deployHash);
+        if (deployResult.execution_results[0].result.Success) {
+          clearInterval(interval);
+          setPending(false);
+          setClaimIndex(-1);
+          setProjectLoading(true, 1);
+        } else if (deployResult.execution_results[0].result.Failure) {
+          clearInterval(interval);
+          setPending(false);
+          setClaimIndex(-1);
+        }
+      }, 5000);
+    } catch (err) {
+      setPending(false);
+      setClaimIndex(-1);
+    }
   };
 
   return (
@@ -255,7 +286,7 @@ export default function ProjectDetailCASPER({ address }) {
                           schedule.data[1].data.toNumber() / 1000;
                         const scheduleAmount =
                           (investAmount * percentage) / 100;
-                        const isClaimed = scheduleClaimed[index] ? 1 : 0;
+                        const isClaimed = scheduleClaimed[index] === 0 ? 0 : 1;
                         return (
                           <tr key={index}>
                             <td>{index + 1}</td>
@@ -269,19 +300,22 @@ export default function ProjectDetailCASPER({ address }) {
                               {" " + tokenSymbol}
                             </td>
                             <td>
-                              {(currentTime >= time &&
-                                isClaimed === 0 &&
-                                verified && (
-                                  <>
-                                    <button
-                                      className="btn btn-wallet wallet-connected"
-                                      onClick={() => handleClaim(index)}
-                                    >
-                                      {" "}
-                                      Claim{" "}
-                                    </button>
-                                  </>
-                                )) ||
+                              {(pending && index === claimIndex && (
+                                <Spinner animation="border" />
+                              )) ||
+                                (currentTime >= time &&
+                                  isClaimed === 0 &&
+                                  verified && (
+                                    <>
+                                      <button
+                                        className="btn btn-wallet wallet-connected"
+                                        onClick={() => handleClaim(index)}
+                                      >
+                                        {" "}
+                                        Claim{" "}
+                                      </button>
+                                    </>
+                                  )) ||
                                 (currentTime >= time && "unlocked") ||
                                 "waiting..."}
                             </td>

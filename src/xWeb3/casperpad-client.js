@@ -52,10 +52,10 @@ class CasperpadClient extends CasperContractClient {
 
   async getClaimedToken(accountHash, projectId, scheduleId) {
     const finalBytes = concat([
+      CLValueParsers.toBytes(CLValueBuilder.string(projectId)).unwrap(),
       CLValueParsers.toBytes(
         new CLKey(new CLAccountHash(decodeBase16(accountHash)))
       ).unwrap(),
-      CLValueParsers.toBytes(CLValueBuilder.string(projectId)).unwrap(),
       CLValueParsers.toBytes(CLValueBuilder.u8(scheduleId)).unwrap(),
     ]);
 
