@@ -71,10 +71,6 @@ export default function CustomCardCASPER({ project, status }) {
           <strong>{project.name + " (" + project.tier + " Tiers" + ")"}</strong>
         </div>
         <div>
-          {/* <span className="status" style={{ backgroundColor: `${project.status === 'Coming' ? 'rgb(240 185 19 / 26%)' : project.status === 'Open' ? 'rgb(92 184 92 / 26%)' : 'rgb(255 0 0 / 25%)'}`, color: `${project.status === 'Coming' ? '#f1b90c' : project.status === 'Open' ? '#5cb85c' : 'red'}` }}>
-                  <BsCircleFill style={{ fontSize: '.6rem', verticalAlign: 'middle' }} />
-                  {project.status === 'Coming' ? ' Opens in TBA' : project.status === 'Open' ? ' Opened' : ' Closed'}
-              </span> &nbsp; */}
           <span
             className="status"
             style={{ backgroundColor: "rgb(255 0 0 / 25%)", color: "red" }}
@@ -83,8 +79,8 @@ export default function CustomCardCASPER({ project, status }) {
               style={{ fontSize: ".6rem", verticalAlign: "middle" }}
             />
             {status === "Coming"
-              ? " Opens in TBA"
-              : status === "Open"
+              ? " Opens in Cspr"
+              : status === "Opened"
               ? " Opened"
               : " Closed"}
           </span>{" "}
@@ -136,16 +132,16 @@ export default function CustomCardCASPER({ project, status }) {
       </div>
       <div className="custom-card-title">
         <div className="social-links">
-          <a href="https://www.the-swappery.io">
+          <a href={project.webpackLink}>
             <SiWebpack className="social-link" />
           </a>
-          <a href="https://twitter.com/TheSwappery">
+          <a href={project.twitterLink}>
             <AiFillTwitterCircle className="social-link" />
           </a>
-          <a href="https://theswappery.medium.com">
+          <a href={project.outlineLink}>
             <AiOutlineMedium className="social-link" />
           </a>
-          <a href=" https://t.me/TheSwapperyAnn ">
+          <a href={project.telegramLink}>
             <FaTelegramPlane className="social-link" />
           </a>
         </div>

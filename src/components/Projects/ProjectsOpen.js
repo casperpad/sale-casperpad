@@ -1,125 +1,144 @@
-import React, { Component, useEffect, useState } from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { useEffect, useState } from "react";
 
-// For skyBridger Sale
+import { casperProjects } from "../../assets/variables";
 
-import CustomCardSkyPrivate from './CustomCardSkyPrivate';
-import CustomCardSkyAdvisor from './CustomCardSkyAdvisor';
-import CustomCardSkypublic from './CustomCardSkypublic';
+import CustomCardCASPER from "./CustomCardCASPER";
 
-
-import { projects } from '../../assets/variables';
-import { 
-    useIsAdmin
-} from '../../util/interactSkypublic';
-import { useEthers, useTokenBalance } from "@usedapp/core";
-
-import {whitelist} from '../../contract_info/whitelist';
-import {whitelist as whitelistSeed} from '../../contract_info/whitelistSeed';
-import {whitelist as whitelistAdvisory} from '../../contract_info/whitelistAdvisory';
-
-// For skyBridger Sale
-
-import {whitelist as whitelistSkyPrivate} from '../../contract_info/whitelistSkyPrivate';
-import {whitelist as whitelistSkyAdvisor} from '../../contract_info/whitelistSkyAdvisor';
-
-
-const { toChecksumAddress } = require('ethereum-checksum-address');
-const keccak256 = require('keccak256');
-const { MerkleTree } = require('merkletreejs');
+import { initClient } from "../../xWeb3";
+import useNetworkStatus from "../../store/useNetworkStatus";
+// const keccak256 = require('keccak256');
+// const { MerkleTree } = require('merkletreejs');
 
 export default function ProjectsOpen() {
-    const [isAdmin, setIsAdmin] = useState(false);
-    const [verifiedPrivate, setVerifiedPrivate] = useState();
-    const [verifiedSeed, setVerifiedSeed] = useState();
-    const [verifiedAdvisory, setVerifiedAdvisory] = useState();
-    const [verifiedSkyPrivate, setVerifiedSkyPrivate] = useState();
-    const [verifiedSkyAdvisor, setVerifiedSkyAdvisor] = useState();
-    const {account} = useEthers();
-    let isAdmin_tmp = useIsAdmin(account);
+  // const {account} = useEthers();
 
-    useEffect( () => {
-        setIsAdmin(isAdmin_tmp);
-    }, [isAdmin_tmp]);
+  // useEffect( () => {
+  //     const leaves = whitelist.map((v) => keccak256(v));
+  //     const tree = new MerkleTree(leaves, keccak256, { sort: true });
+  //     const _root = tree.getHexRoot();
+  //     const leaf = keccak256(account);
+  //     const _proof = tree.getHexProof(leaf);
 
-    // useEffect( () => {
-    //     const leaves = whitelist.map((v) => keccak256(v));
-    //     const tree = new MerkleTree(leaves, keccak256, { sort: true });
-    //     const _root = tree.getHexRoot();
-    //     const leaf = keccak256(account);
-    //     const _proof = tree.getHexProof(leaf);
-        
-    //     const _verified = tree.verify(_proof, leaf, _root);
-    //     setVerifiedPrivate(_verified);
-    //     console.log('verifiedPrivate', _verified);
+  //     const _verified = tree.verify(_proof, leaf, _root);
+  //     setVerifiedPrivate(_verified);
+  //     console.log('verifiedPrivate', _verified);
 
-    // }, [account]);
+  // }, [account]);
 
-    // useEffect( () => {
-    //     const leaves = whitelistSeed.map((v) => keccak256(v));
-    //     const tree = new MerkleTree(leaves, keccak256, { sort: true });
-    //     const _root = tree.getHexRoot();
-    //     const leaf = keccak256(account);
-    //     const _proof = tree.getHexProof(leaf);
-        
-    //     const _verified = tree.verify(_proof, leaf, _root);
-    //     setVerifiedSeed(_verified);
-    //     console.log('verifiedSeed', _verified);
+  // useEffect( () => {
+  //     const leaves = whitelistSeed.map((v) => keccak256(v));
+  //     const tree = new MerkleTree(leaves, keccak256, { sort: true });
+  //     const _root = tree.getHexRoot();
+  //     const leaf = keccak256(account);
+  //     const _proof = tree.getHexProof(leaf);
 
-    // }, [account]);
+  //     const _verified = tree.verify(_proof, leaf, _root);
+  //     setVerifiedSeed(_verified);
+  //     console.log('verifiedSeed', _verified);
 
-    // useEffect( () => {
-    //     const leaves = whitelistAdvisory.map((v) => keccak256(v));
-    //     const tree = new MerkleTree(leaves, keccak256, { sort: true });
-    //     const _root = tree.getHexRoot();
-    //     const leaf = keccak256(account);
-    //     const _proof = tree.getHexProof(leaf);
-        
-    //     const _verified = tree.verify(_proof, leaf, _root);
-    //     setVerifiedAdvisory(_verified);
-    //     console.log('verifiedAdvisory', _verified);
+  // }, [account]);
 
-    // }, [account]);
+  // useEffect( () => {
+  //     const leaves = whitelistAdvisory.map((v) => keccak256(v));
+  //     const tree = new MerkleTree(leaves, keccak256, { sort: true });
+  //     const _root = tree.getHexRoot();
+  //     const leaf = keccak256(account);
+  //     const _proof = tree.getHexProof(leaf);
 
-    // For skyBridger sale
-    
-    useEffect( () => {
-        const leaves = whitelistSkyPrivate.map((v) => keccak256(v));
-        const tree = new MerkleTree(leaves, keccak256, { sort: true });
-        const _root = tree.getHexRoot();
-        const leaf = keccak256(account);
-        const _proof = tree.getHexProof(leaf);
-        
-        const _verified = tree.verify(_proof, leaf, _root);
-        setVerifiedSkyPrivate(_verified);
-        console.log('verifiedSkyPrivate', _verified);
+  //     const _verified = tree.verify(_proof, leaf, _root);
+  //     setVerifiedAdvisory(_verified);
+  //     console.log('verifiedAdvisory', _verified);
 
-    }, [account]);
+  // }, [account]);
 
-    useEffect( () => {
-        const leaves = whitelistSkyAdvisor.map((v) => keccak256(v));
-        const tree = new MerkleTree(leaves, keccak256, { sort: true });
-        const _root = tree.getHexRoot();
-        const leaf = keccak256(account);
-        const _proof = tree.getHexProof(leaf);
-        
-        const _verified = tree.verify(_proof, leaf, _root);
-        setVerifiedSkyAdvisor(_verified);
-        console.log('verifiedSkyAdvisor', _verified);
+  // For skyBridger sale
 
-    }, [account]);
+  // useEffect( () => {
+  //     const leaves = whitelistSkyPrivate.map((v) => keccak256(v));
+  //     const tree = new MerkleTree(leaves, keccak256, { sort: true });
+  //     const _root = tree.getHexRoot();
+  //     const leaf = keccak256(account);
+  //     const _proof = tree.getHexProof(leaf);
 
-    return (
-        <>
-            <h1 className="text-center font-weight-bold text-white project-title">PROJECTS OPEN NOW</h1>
-            <section className="projects mx-auto">
-                {/* {
-                    projects.map((project, index) => {
-                        return (
-                          <></>
-                        );
-                    })
-                } */}
-            </section>
-        </>
-    );
+  //     const _verified = tree.verify(_proof, leaf, _root);
+  //     setVerifiedSkyPrivate(_verified);
+  //     console.log('verifiedSkyPrivate', _verified);
+
+  // }, [account]);
+
+  // useEffect( () => {
+  //     const leaves = whitelistSkyAdvisor.map((v) => keccak256(v));
+  //     const tree = new MerkleTree(leaves, keccak256, { sort: true });
+  //     const _root = tree.getHexRoot();
+  //     const leaf = keccak256(account);
+  //     const _proof = tree.getHexProof(leaf);
+
+  //     const _verified = tree.verify(_proof, leaf, _root);
+  //     setVerifiedSkyAdvisor(_verified);
+  //     console.log('verifiedSkyAdvisor', _verified);
+
+  // }, [account]);
+
+  const { showCasperProjects } = useNetworkStatus();
+
+  const [csprProjects, setCsprProjects] = useState([]);
+  const currentTime = new Date().getTime();
+
+  useEffect(async () => {
+    try {
+      const casperpadClient = await initClient();
+
+      let promises = casperProjects.map(async (project) => {
+        return await casperpadClient.getProjectUrefById(
+          project.contractAddress
+        );
+      });
+
+      const projectUrefs = await Promise.all(promises);
+
+      promises = projectUrefs.map(async (projectUref) => {
+        return await casperpadClient.getDataByFieldName(
+          projectUref,
+          "sale_start_time"
+        );
+      });
+
+      const saleStartTimes = await Promise.all(promises);
+
+      promises = projectUrefs.map(async (projectUref) => {
+        return await casperpadClient.getDataByFieldName(
+          projectUref,
+          "sale_end_time"
+        );
+      });
+
+      const saleEndTimes = await Promise.all(promises);
+
+      saleEndTimes.forEach((saleEndTime, index) => {
+        if (currentTime > saleStartTimes[index] && currentTime < saleEndTime)
+          setCsprProjects([...csprProjects, casperProjects[index]]);
+      });
+    } catch (err) {}
+  }, []);
+
+  return (
+    <>
+      <h1 className="text-center font-weight-bold text-white project-title">
+        PROJECTS OPEN NOW
+      </h1>
+      <section className="projects mx-auto">
+        {showCasperProjects &&
+          csprProjects.map((project, index) => {
+            return (
+              <CustomCardCASPER
+                key={index}
+                project={project}
+                status={"Opened"}
+              />
+            );
+          })}
+      </section>
+    </>
+  );
 }

@@ -1,7 +1,7 @@
 import CasperpadClient from "./casperpad-client";
 import { NODE_ADDRESS, CHAIN_NAME, CASPERIDO_CONTRACT_HASH } from "./constants";
 
-import { CLPublicKey, CasperClient } from "casper-js-sdk";
+import { CLPublicKey } from "casper-js-sdk";
 
 export const initClient = async () => {
   const casperpadClient = new CasperpadClient(
@@ -12,11 +12,6 @@ export const initClient = async () => {
   await casperpadClient.setContractHash(CASPERIDO_CONTRACT_HASH.slice(5));
 
   return casperpadClient;
-};
-
-export const newCasperClient = () => {
-  const client = new CasperClient(NODE_ADDRESS);
-  return client;
 };
 
 export const getAccountHashString = (casperAddress) => {

@@ -5,7 +5,7 @@ import { BiMoney, BiKey } from "react-icons/all";
 import { Container, Row, Col, Table, Tabs, Tab } from "react-bootstrap";
 import { Toast } from "react-bootstrap";
 
-import { initClient, newCasperClient, getAccountHashString } from "../../xWeb3";
+import { initClient, getAccountHashString } from "../../xWeb3";
 import useNetworkStatus from "../../store/useNetworkStatus";
 import { casperProjects } from "../../assets/variables";
 import { whitelist } from "../../contract_info/whitelistCASPER";
@@ -17,23 +17,22 @@ export default function ProjectDetailCASPER({ address }) {
   const [isAdmin, setIsAdmin] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [toastText, setToastText] = useState("");
-  //const tmpSoldAmount = useTempSoldAmount();
   const [loading, setLoading] = useState(true);
   const [openTime, setOpenTime] = useState("");
   const [tokenSymbol, setTokenSymbol] = useState("");
   const [tokenPrice, setTokenPrice] = useState(0);
   const [tokenDecimals, setTokenDecimals] = useState(0);
   const [tokenCapacity, setTokenCapacity] = useState(0);
+  const [csprToken, setCsprToken] = useState(0);
   const [soldAmount, setSoldAmount] = useState(0);
   const [participants, setParticipants] = useState(0);
   const [name, setName] = useState("");
   const [schedules, setSchedules] = useState([]);
+  const [investAmount, setInvestAmount] = useState(0);
+  const [scheduleClaimed, setScheduleClaimed] = useState([]);
   const [verified, setVerified] = useState(false);
   const [projectId, setProjectId] = useState(-1);
-  const [merkleRoot, setMerkleRoot] = useState();
-  const [pending, setPending] = useState(false);
-  //let isAdmin_tmp = useIsAdmin(account);
-  //let soldAmount_tmp = useSoldAmount();
+  const [merkleRoot, setMerkleRoot] = useState("");
 
   const currentTime = new Date().getTime();
 
@@ -43,8 +42,6 @@ export default function ProjectDetailCASPER({ address }) {
     projectLoading,
     projectLoaded,
     casperAddress,
-    claimDeployHash,
-    setClaimDeployHash,
   } = useNetworkStatus();
 
   useEffect(() => {
@@ -58,6 +55,7 @@ export default function ProjectDetailCASPER({ address }) {
   useEffect(async () => {
     if (casperAddress === "") {
       setVerified(false);
+      setIsAdmin(false);
       return;
     }
     const leaves = whitelist[projectId].map(keccak256);
@@ -70,8 +68,31 @@ export default function ProjectDetailCASPER({ address }) {
     setVerified(_verified);
 
     const casperpadClient = await initClient();
-    const isAdmin = await casperpadClient.isAdmin(casperAddress);
+    const [isAdmin, invests] = await Promise.all([
+      casperpadClient.isAdmin(casperAddress),
+      casperpadClient
+        .getTierDataOfAccount(
+          getAccountHashString(casperAddress),
+          address,
+          "invests"
+        )
+        .catch((err) => {
+          return 0;
+        }),
+    ]);
     setIsAdmin(isAdmin);
+    setInvestAmount(((invests / 10 ** 9) * csprToken) / 10 ** tokenDecimals);
+
+    const promises = schedules.map(async (schedule, index) => {
+      return await casperpadClient
+        .getClaimedToken(getAccountHashString(casperAddress), address, index)
+        .catch((err) => {
+          return 0;
+        });
+    });
+
+    const claimed = await Promise.all(promises);
+    setScheduleClaimed(claimed);
   }, [casperAddress]);
 
   useEffect(() => {
@@ -115,10 +136,12 @@ export default function ProjectDetailCASPER({ address }) {
       );
       setName(response[7]);
       setSchedules(response[8]);
+      setCsprToken(
+        Math.round((response[9] / response[2]) * 10 ** response[3].toNumber())
+      );
       setProjectLoaded(true, 1);
     } catch (err) {
       setProjectLoaded(false, 1);
-      console.log("ProjectDetail", err);
     }
     setLoading(false);
     setProjectLoading(false, 1);
@@ -126,24 +149,8 @@ export default function ProjectDetailCASPER({ address }) {
 
   const handleClaim = async (index) => {
     const casperpadClient = await initClient();
-    const deployHash = await casperpadClient.claim(
-      address,
-      index,
-      casperAddress
-    );
-    setClaimDeployHash(deployHash);
+    await casperpadClient.claim(address, index, casperAddress);
   };
-
-  useEffect(async () => {
-    if (claimDeployHash === "") {
-      setPending(false);
-      return;
-    }
-    const client = newCasperClient();
-    const [, deployResult] = await client.getDeploy(claimDeployHash);
-    if (deployResult.execution_results.length === 0) setPending(true);
-    else setPending(false);
-  }, [claimDeployHash]);
 
   return (
     <>
@@ -242,34 +249,13 @@ export default function ProjectDetailCASPER({ address }) {
                       </tr>
                     </thead>
                     <tbody>
-                      {schedules.map(async (schedule, index) => {
-                        const casperpadClient = await initClient();
+                      {schedules.map((schedule, index) => {
                         const time = schedule.data[0].data.toNumber();
                         const percentage =
                           schedule.data[1].data.toNumber() / 1000;
-                        const response = await Promise.all([
-                          casperpadClient
-                            .getAmountDataOfAccount(
-                              getAccountHashString(casperAddress),
-                              address,
-                              "invests"
-                            )
-                            .catch((err) => {
-                              return 0;
-                            }),
-                          casperpadClient
-                            .getAmountDataOfAccount(
-                              getAccountHashString(casperAddress),
-                              address,
-                              "claims"
-                            )
-                            .catch((err) => {
-                              return 0;
-                            }),
-                        ]);
                         const scheduleAmount =
-                          response[0] / 10 ** tokenDecimals;
-                        const isClaimed = response[1] / 10 ** tokenDecimals;
+                          (investAmount * percentage) / 100;
+                        const isClaimed = scheduleClaimed[index] ? 1 : 0;
                         return (
                           <tr key={index}>
                             <td>{index + 1}</td>
@@ -284,9 +270,8 @@ export default function ProjectDetailCASPER({ address }) {
                             </td>
                             <td>
                               {(currentTime >= time &&
-                                verified &&
-                                !pending &&
-                                isClaimed === 0 && (
+                                isClaimed === 0 &&
+                                verified && (
                                   <>
                                     <button
                                       className="btn btn-wallet wallet-connected"

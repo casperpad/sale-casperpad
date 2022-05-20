@@ -30,7 +30,7 @@ export default function TokenDetailNew({ address }) {
   const currentTime = new Date().getTime();
   const [loading, setLoading] = useState(true);
   const [projectId, setProjectId] = useState(-1);
-  const [project, setProject] = useState();
+  const [project, setProject] = useState("");
   const [status, setStatus] = useState("");
   const [tokenSymbol, setTokenSymbol] = useState("");
   const [participants, setParticipants] = useState(0);
@@ -41,7 +41,7 @@ export default function TokenDetailNew({ address }) {
   const [tokenBalance, setTokenBalance] = useState(-1);
   const [tokenDecimals, setTokenDecimals] = useState(0);
   const [tokenPrice, setTokenPrice] = useState(1000);
-  const [tier, setTier] = useState(-1);
+  const [tier, setTier] = useState(0);
   const [saleStartTime, setSaleStartTime] = useState(0);
   const [saleEndTime, setSaleEndTime] = useState(0);
   const [totalPresaleAmount, setTotalPresaleAmount] = useState(0);
@@ -50,8 +50,8 @@ export default function TokenDetailNew({ address }) {
   const [csprPrice, setCsprPrice] = useState(0);
   const [token_cspr, setToken_cspr] = useState(0);
   const [cspr_token, setCspr_token] = useState(0);
-  const [projectUref, setProjectUref] = useState();
-  const [merkleRoot, setMerkleRoot] = useState();
+  const [projectUref, setProjectUref] = useState("");
+  const [merkleRoot, setMerkleRoot] = useState("");
 
   const {
     casperConnected,
@@ -84,60 +84,63 @@ export default function TokenDetailNew({ address }) {
       const projectUref = await casperpadClient.getProjectUrefById(address);
       setProjectUref(projectUref);
       const response = await Promise.all([
-        casperpadClient.getDataByFieldName(projectUref, "status"), // 0
-        casperpadClient.getDataByFieldName(projectUref, "users_length"), // 1
-        casperpadClient.getDataByFieldName(projectUref, "token_symbol"), // 2
-        casperpadClient.getDataByFieldName(projectUref, "token_price"), // 3
-        casperpadClient.getDataByFieldName(projectUref, "token_decimals"), // 4
-        casperpadClient.getDataByFieldName(projectUref, "token_address"), // 5
-        casperpadClient.getDataByFieldName(projectUref, "sale_start_time"), // 6
-        casperpadClient.getDataByFieldName(projectUref, "sale_end_time"), // 7
-        casperpadClient.getDataByFieldName(projectUref, "total_invests_amount"), // 8
-        casperpadClient.getDataByFieldName(projectUref, "cspr_price"), // 9
-        casperpadClient.getDataByFieldName(projectUref, "token_capacity"), // 10
+        casperpadClient.getDataByFieldName(projectUref, "users_length"), // 0
+        casperpadClient.getDataByFieldName(projectUref, "token_symbol"), // 1
+        casperpadClient.getDataByFieldName(projectUref, "token_price"), // 2
+        casperpadClient.getDataByFieldName(projectUref, "token_decimals"), // 3
+        casperpadClient.getDataByFieldName(projectUref, "token_address"), // 4
+        casperpadClient.getDataByFieldName(projectUref, "sale_start_time"), // 5
+        casperpadClient.getDataByFieldName(projectUref, "sale_end_time"), // 6
+        casperpadClient.getDataByFieldName(projectUref, "total_invests_amount"), // 7
+        casperpadClient.getDataByFieldName(projectUref, "cspr_price"), // 8
+        casperpadClient.getDataByFieldName(projectUref, "token_capacity"), // 9
       ]);
 
-      setStatus(response[0].toNumber() === 1 ? "Closed" : "");
-      setParticipants(response[1].toNumber());
-      setTokenSymbol(response[2]);
-      setTokenPrice(response[3]);
-      setTokenDecimals(response[4].toNumber());
-      const tokenAddress = utils.toAccountHashString(response[5]);
+      // setStatus(response[0].toNumber() === 1 ? "Closed" : "");
+      const currentTime = new Date().getTime();
+      if (currentTime < response[5].toNumber()) setStatus("Coming");
+      else if (currentTime < response[6].toNumber()) setStatus("Opened");
+      else setStatus("Closed");
+
+      setParticipants(response[0].toNumber());
+      setTokenSymbol(response[1]);
+      setTokenPrice(response[2]);
+      setTokenDecimals(response[3].toNumber());
+      const tokenAddress = utils.toAccountHashString(response[4]);
       setTokenAddress(tokenAddress);
-      setSaleStartTime(response[6].toNumber());
-      setSaleEndTime(response[7].toNumber());
-      setCsprPrice(response[9]);
+      setSaleStartTime(response[5].toNumber());
+      setSaleEndTime(response[6].toNumber());
+      setCsprPrice(response[8]);
 
       const soldAmount = (
-        ((response[8] / 10 ** 9) * response[9]) /
-        response[3]
+        ((response[7] / 10 ** 9) * response[8]) /
+        response[2]
       ).toFixed(5);
       setSoldAmount(soldAmount);
 
       const totalPresaleAmount = (
-        response[10] /
-        10 ** response[4].toNumber()
+        response[9] /
+        10 ** response[3].toNumber()
       ).toFixed(5);
       setTotalPresaleAmount(totalPresaleAmount);
 
       const remainAmount = (totalPresaleAmount - soldAmount).toFixed(5);
       setRemainAmount(remainAmount);
 
-      setToken_cspr(Math.round((response[3] / response[9]) * 10 ** 9));
+      setToken_cspr(Math.round((response[2] / response[8]) * 10 ** 9));
       setCspr_token(
-        Math.round((response[9] / response[3]) * 10 ** response[4].toNumber())
+        Math.round((response[8] / response[2]) * 10 ** response[3].toNumber())
       );
 
       setProgressValue(
         (
-          ((response[8] / 10 ** 9) * response[9] * 100) /
-          ((response[10] / 10 ** response[4].toNumber()) * response[3])
+          ((response[7] / 10 ** 9) * response[8] * 100) /
+          ((response[9] / 10 ** response[3].toNumber()) * response[2])
         ).toFixed(5)
       );
       setProjectLoaded(true, 0);
     } catch (err) {
       setProjectLoaded(false, 0);
-      console.log("TokenDetail", err);
     }
     setLoading(false);
     setProjectLoading(false, 0);
@@ -154,17 +157,28 @@ export default function TokenDetailNew({ address }) {
     } catch (err) {
       setTokenBalance(-1);
     }
-    try {
-      const casperpadClient = await initClient();
-      const tier = await casperpadClient.getAmountDataOfAccount(
-        getAccountHashString(casperAddress),
-        address,
-        "tiers"
-      );
-      setTier(tier / 10 ** 9);
-    } catch (err) {
-      setTier(-1);
-    }
+    const casperpadClient = await initClient();
+    const [tier, invests] = await Promise.all([
+      casperpadClient
+        .getTierDataOfAccount(
+          getAccountHashString(casperAddress),
+          address,
+          "tiers"
+        )
+        .catch((err) => {
+          return 0;
+        }),
+      casperpadClient
+        .getTierDataOfAccount(
+          getAccountHashString(casperAddress),
+          address,
+          "invests"
+        )
+        .catch((err) => {
+          return 0;
+        }),
+    ]);
+    setTier((tier - invests) / 10 ** 9);
   }, [casperAddress, tokenAddress]);
 
   let temp = Math.floor(
@@ -260,7 +274,7 @@ export default function TokenDetailNew({ address }) {
                         style={{ fontSize: ".6rem", verticalAlign: "middle" }}
                       />
                       {status === "Coming"
-                        ? " Opens in TBA"
+                        ? " Opens in Cspr"
                         : status === "Opened"
                         ? " Opened"
                         : " Closed"}
@@ -317,16 +331,16 @@ export default function TokenDetailNew({ address }) {
                   </div>
                   <div className="mt-3">
                     <div className="social-links">
-                      <a href="https://www.the-swappery.io">
+                      <a href={project ? project.webpackLink : "/"}>
                         <SiWebpack className="social-link" />
                       </a>
-                      <a href="https://twitter.com/TheSwappery">
+                      <a href={project ? project.twitterLink : "/"}>
                         <AiFillTwitterCircle className="social-link" />
                       </a>
-                      <a href="https://theswappery.medium.com">
+                      <a href={project ? project.outlineLink : "/"}>
                         <AiOutlineMedium className="social-link" />
                       </a>
-                      <a href=" https://t.me/TheSwapperyAnn ">
+                      <a href={project ? project.telegramLink : "/"}>
                         <FaTelegramPlane className="social-link" />
                       </a>
                     </div>
@@ -350,7 +364,7 @@ export default function TokenDetailNew({ address }) {
                       " " +
                       tokenSymbol}{" "}
                 </div>
-                {(tier !== -1 && (
+                {(tier > 0 && (
                   <div>
                     {" "}
                     {Number((tier * csprPrice) / 10 ** 18).toFixed(2) +
@@ -358,9 +372,7 @@ export default function TokenDetailNew({ address }) {
                   </div>
                 )) || <div> This wallet is not whitelisted </div>}
                 <div style={{ paddingRight: "3rem" }}> {} </div>
-                {tier !== -1 && (
-                  <div> {Number(tier).toFixed(2) + " CSPR"} </div>
-                )}
+                {tier > 0 && <div> {Number(tier).toFixed(2) + " CSPR"} </div>}
               </div>
               <hr className="bg-gray-100" />
               <div className="grid-box">
@@ -372,13 +384,13 @@ export default function TokenDetailNew({ address }) {
                 <div> Remaining Allocation: </div>
               </div>
               <div className="grid-box text-white">
-                <div> {Number(soldAmount).toFixed(2) + " " + tokenSymbol} </div>
+                <div> {Number(soldAmount).toFixed(5) + " " + tokenSymbol} </div>
                 <div> {remainAmount + " " + tokenSymbol} </div>
               </div>
               <div className="grid-box text-white">
                 <div>
                   {" "}
-                  {((soldAmount * tokenPrice) / 10 ** 18).toFixed(2) +
+                  {((soldAmount * tokenPrice) / 10 ** 18).toFixed(5) +
                     " USD"}{" "}
                 </div>
               </div>

@@ -33,7 +33,7 @@ const contractCallFn = async ({
   const contractHashAsByteArray = utils.contractHashToByteArray(contractHash);
 
   const dependenciesBytes = dependencies.map((d) => {
-    Uint8Array.from(Buffer.from(d, "hex"));
+    return Uint8Array.from(Buffer.from(d, "hex"));
   });
 
   let deploy = DeployUtil.makeDeploy(
