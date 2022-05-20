@@ -114,21 +114,32 @@ export default function ProjectsClosed() {
   }, [account]);
 
   const [csprProjects, setCsprProjects] = useState([]);
+  const currentTime = new Date().getTime();
 
   useEffect(async () => {
     try {
       const casperpadClient = await initClient();
-      casperProjects.forEach(async (project) => {
-        const projectUref = await casperpadClient.getProjectUrefById(
-          "swappery"
+
+      let promises = casperProjects.map(async (project) => {
+        return await casperpadClient.getProjectUrefById(
+          project.contractAddress
         );
-        const status = await casperpadClient.getDataByFieldName(
+      });
+
+      const projectUrefs = await Promise.all(promises);
+
+      promises = projectUrefs.map(async (projectUref) => {
+        return await casperpadClient.getDataByFieldName(
           projectUref,
-          "status"
+          "sale_end_time"
         );
-        if (status.toNumber() === 1) {
-          setCsprProjects([...csprProjects, project]);
-        }
+      });
+
+      const saleEndTimes = await Promise.all(promises);
+
+      saleEndTimes.forEach((saleEndTime, index) => {
+        if (currentTime > saleEndTime)
+          setCsprProjects([...csprProjects, casperProjects[index]]);
       });
     } catch (err) {}
   }, []);

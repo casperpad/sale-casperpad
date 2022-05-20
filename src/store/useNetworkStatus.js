@@ -11,7 +11,6 @@ const useNetworkStatus = create((set) => ({
   projectLoading: false,
   loaded: [false, false],
   projectLoaded: false,
-  claimDeployHash: "",
   setShowCasperProjects: (showCasperProjects) =>
     set(() => ({ showCasperProjects })),
   setShowBinanceProjects: (showBinanceProjects) =>
@@ -39,11 +38,6 @@ const useNetworkStatus = create((set) => ({
       let loaded = state.loaded;
       loaded[index] = status;
       return { loaded, projectLoaded: loaded[0] && loaded[1] };
-    }),
-  setClaimDeployHash: (deployHash) =>
-    set(() => {
-      const claimDeployHash = deployHash ?? "";
-      return { claimDeployHash };
     }),
 }));
 

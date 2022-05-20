@@ -1,7 +1,6 @@
 import { CasperContractClient, helpers, utils } from "casper-js-client-helper";
 
 import { concat } from "@ethersproject/bytes";
-import blake from "blakejs";
 
 import {
   CLKey,
@@ -34,33 +33,12 @@ class CasperpadClient extends CasperContractClient {
     this.namedKeys = namedKeys;
   }
 
-  async queryContract(key) {
-    return await contractSimpleGetter(this.nodeAddress, this.contractHash, [
-      key,
-    ]);
-  }
-
-  async claim(project_id, schedule_id, address) {
-    const publicKey = CLPublicKey.fromHex(address);
-    const deployHash = await contractCallWithSigner({
-      publicKey,
-      paymeontAmount: 3 * 10 ** 9,
-      entryPoint: "claim",
-      runtimeArgs: RuntimeArgs.fromMap({
-        id: CLValueBuilder.string(project_id),
-        schedule_id: CLValueBuilder.u8(schedule_id),
-      }),
-      cb: (deployHash) => this.addPendingDeploy("claim", deployHash),
-    });
-    return deployHash;
-  }
-
-  async getAmountDataOfAccount(accountHash, project_id, namedKey) {
+  async getTierDataOfAccount(accountHash, projectId, namedKey) {
     const finalBytes = concat([
       CLValueParsers.toBytes(
         new CLKey(new CLAccountHash(decodeBase16(accountHash)))
       ).unwrap(),
-      CLValueParsers.toBytes(CLValueBuilder.string(project_id)).unwrap(),
+      CLValueParsers.toBytes(CLValueBuilder.string(projectId)).unwrap(),
     ]);
 
     const encodedBytes = Buffer.from(finalBytes).toString("base64");
@@ -68,6 +46,24 @@ class CasperpadClient extends CasperContractClient {
       this.nodeAddress,
       encodedBytes,
       this.namedKeys[namedKey]
+    );
+    return result;
+  }
+
+  async getClaimedToken(accountHash, projectId, scheduleId) {
+    const finalBytes = concat([
+      CLValueParsers.toBytes(
+        new CLKey(new CLAccountHash(decodeBase16(accountHash)))
+      ).unwrap(),
+      CLValueParsers.toBytes(CLValueBuilder.string(projectId)).unwrap(),
+      CLValueParsers.toBytes(CLValueBuilder.u8(scheduleId)).unwrap(),
+    ]);
+
+    const encodedBytes = Buffer.from(finalBytes).toString("base64");
+    const result = await utils.contractDictionaryGetter(
+      this.nodeAddress,
+      encodedBytes,
+      this.namedKeys["claims"]
     );
     return result;
   }
@@ -87,8 +83,7 @@ class CasperpadClient extends CasperContractClient {
   async getDataByFieldName(project_uref, field_name) {
     const name_field = CLValueBuilder.string(field_name);
     const finalBytes = concat([CLValueParsers.toBytes(name_field).unwrap()]);
-    const blaked = blake.blake2b(finalBytes, undefined, 32);
-    const encodedBytes = Buffer.from(blaked).toString("base64");
+    const encodedBytes = Buffer.from(finalBytes).toString("base64");
     const result = await utils.contractDictionaryGetter(
       this.nodeAddress,
       encodedBytes,
@@ -112,10 +107,18 @@ class CasperpadClient extends CasperContractClient {
     return result;
   }
 
+  async queryContract(key) {
+    return await contractSimpleGetter(this.nodeAddress, this.contractHash, [
+      key,
+    ]);
+  }
+
   async isAdmin(account) {
-    const accountHash = CLPublicKey.fromHex(account).toAccountHashStr();
+    const accountHash = CLPublicKey.fromHex(account)
+      .toAccountHashStr()
+      .slice(13);
     const ownerHashHex = await this.queryContract("owner");
-    const ownerHash = utils.toAccountHashString(ownerHashHex.data);
+    const ownerHash = utils.toAccountHashString(ownerHashHex);
     return accountHash === ownerHash;
   }
 
@@ -143,6 +146,21 @@ class CasperpadClient extends CasperContractClient {
         ),
       }),
       pathToContract: PRE_INVEST_WASM_PATH,
+    });
+    return deployHash;
+  }
+
+  async claim(projectId, scheduleId, address) {
+    const publicKey = CLPublicKey.fromHex(address);
+    const deployHash = await contractCallWithSigner({
+      publicKey,
+      paymentAmount: 3 * 10 ** 9,
+      entryPoint: "claim",
+      runtimeArgs: RuntimeArgs.fromMap({
+        id: CLValueBuilder.string(projectId),
+        schedule_id: CLValueBuilder.u8(scheduleId),
+      }),
+      cb: (deployHash) => this.addPendingDeploy("claim", deployHash),
     });
     return deployHash;
   }
