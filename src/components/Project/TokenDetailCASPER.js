@@ -73,6 +73,11 @@ export default function TokenDetailNew({ address }) {
     setProjectLoaded(false, 0);
   }, []);
 
+  useEffect(() => {
+    if (projectLoading === false) return;
+    setLoading(true);
+  }, [projectLoading]);
+
   useEffect(async () => {
     setProjectLoading(loading, 0);
     if (loading === false) return;
