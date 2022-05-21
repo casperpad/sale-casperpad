@@ -36,7 +36,8 @@ const BuyModal = (props) => {
   const [loading, setLoading] = useState(false);
   const [proof, setProof] = useState();
 
-  const { casperConnected, casperAddress } = useNetworkStatus();
+  const { casperConnected, casperAddress, setProjectLoading } =
+    useNetworkStatus();
 
   useEffect(() => {
     if (!casperConnected) setIsOpen(false);
@@ -101,23 +102,25 @@ const BuyModal = (props) => {
       const interval = setInterval(async () => {
         const casperClient = new CasperClient(NODE_ADDRESS);
         const [, deployResult] = await casperClient.getDeploy(deployHash);
-        if (deployResult.execution_results[0].result.Success) {
+        if (deployResult.execution_results.length !== 0) {
           clearInterval(interval);
           setLoading(false);
-          setIsOpenVest(true);
-        } else if (deployResult.execution_results[0].result.Failure) {
-          clearInterval(interval);
-          setLoading(false);
-          setToastText("Vest failed!");
-          setShowToast(true);
+          handleClose();
+          if (deployResult.execution_results[0].result.Success) {
+            setIsOpenVest(true);
+            setProjectLoading(true, 0);
+          } else if (deployResult.execution_results[0].result.Failure) {
+            setToastText("Vest failed!");
+            setShowToast(true);
+          }
         }
       }, 5000);
     } catch (err) {
       setLoading(false);
       setToastText("Vest failed!");
       setShowToast(true);
+      handleClose();
     }
-    handleClose();
   }
 
   return (

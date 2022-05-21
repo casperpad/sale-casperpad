@@ -10,6 +10,20 @@ import card_1 from "./img/green_2.png";
 
 const casperProjects = [
   {
+    contractAddress: "skybridge",
+    tier: 6,
+    picture: tokenLogo,
+    name: "SkyBridge",
+    swap_rate: "0.05",
+    cap: "$50",
+    access: "Public",
+    message: "SkyBridge",
+    webpackLink: "/",
+    twitterLink: "/",
+    outlineLink: "/",
+    telegramLink: "/",
+  },
+  {
     contractAddress: "swappery",
     tier: 8,
     picture: tokenLogo,

@@ -100,7 +100,7 @@ export default function ProjectDetailCASPER({ address }) {
     ]);
     setIsAdmin(isAdmin);
     setInvestAmount(((invests / 10 ** 9) * csprToken) / 10 ** tokenDecimals);
-  }, [casperAddress]);
+  }, [casperAddress, loading]);
 
   useEffect(() => {
     if (projectLoading === false) return;
@@ -109,15 +109,15 @@ export default function ProjectDetailCASPER({ address }) {
 
   useEffect(async () => {
     setProjectLoading(loading, 1);
+    if (loading === false) return;
     try {
       const casperpadClient = await initClient();
 
-      const res = await Promise.all([
+      const [merkleRoot, projectUref] = await Promise.all([
         casperpadClient.queryContract("merkle_root"),
         casperpadClient.getProjectUrefById(address),
       ]);
-      setMerkleRoot(res[0]);
-      const projectUref = res[1];
+      setMerkleRoot(merkleRoot);
       const response = await Promise.all([
         casperpadClient.getDataByFieldName(projectUref, "open_time"), //0
         casperpadClient.getDataByFieldName(projectUref, "token_symbol"), //1
@@ -167,15 +167,13 @@ export default function ProjectDetailCASPER({ address }) {
       const interval = setInterval(async () => {
         const client = new CasperClient(NODE_ADDRESS);
         const [, deployResult] = await client.getDeploy(deployHash);
-        if (deployResult.execution_results[0].result.Success) {
+        if (deployResult.execution_results.length !== 0) {
           clearInterval(interval);
           setPending(false);
           setClaimIndex(-1);
-          setProjectLoading(true, 1);
-        } else if (deployResult.execution_results[0].result.Failure) {
-          clearInterval(interval);
-          setPending(false);
-          setClaimIndex(-1);
+          if (deployResult.execution_results[0].result.Success) {
+            setProjectLoading(true, 1);
+          }
         }
       }, 5000);
     } catch (err) {

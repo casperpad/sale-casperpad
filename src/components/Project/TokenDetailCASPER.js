@@ -42,6 +42,7 @@ export default function TokenDetailNew({ address }) {
   const [tokenDecimals, setTokenDecimals] = useState(0);
   const [tokenPrice, setTokenPrice] = useState(1000);
   const [tier, setTier] = useState(0);
+  const [maxTier, setMaxTier] = useState(0);
   const [saleStartTime, setSaleStartTime] = useState(0);
   const [saleEndTime, setSaleEndTime] = useState(0);
   const [totalPresaleAmount, setTotalPresaleAmount] = useState(0);
@@ -84,9 +85,11 @@ export default function TokenDetailNew({ address }) {
     try {
       const casperpadClient = await initClient();
 
-      const merkleRoot = await casperpadClient.queryContract("merkle_root");
+      const [merkleRoot, projectUref] = await Promise.all([
+        casperpadClient.queryContract("merkle_root"),
+        casperpadClient.getProjectUrefById(address),
+      ]);
       setMerkleRoot(merkleRoot);
-      const projectUref = await casperpadClient.getProjectUrefById(address);
       setProjectUref(projectUref);
       const response = await Promise.all([
         casperpadClient.getDataByFieldName(projectUref, "users_length"), // 0
@@ -123,6 +126,7 @@ export default function TokenDetailNew({ address }) {
       ).toFixed(5);
       setSoldAmount(soldAmount);
 
+      console.log("Token Capacity", response[9] / 10 ** response[3].toNumber());
       const totalPresaleAmount = (
         response[9] /
         10 ** response[3].toNumber()
@@ -183,8 +187,9 @@ export default function TokenDetailNew({ address }) {
           return 0;
         }),
     ]);
+    setMaxTier(tier / 10 ** 9);
     setTier((tier - invests) / 10 ** 9);
-  }, [casperAddress, tokenAddress]);
+  }, [casperAddress, tokenAddress, loading]);
 
   let temp = Math.floor(
     (saleEndTime - Math.floor(new Date().getTime())) / 1000
@@ -196,9 +201,11 @@ export default function TokenDetailNew({ address }) {
 
   const [, setTimeTemp] = useState();
 
-  setInterval(myTimer, 1000);
+  let interval = setInterval(myTimer, 1000);
   function myTimer() {
     if (saleStartTime === 0) return;
+    if (saleStartTime < Math.floor(new Date().getTime()))
+      clearInterval(interval);
     temp = Math.floor(
       (saleStartTime - Math.floor(new Date().getTime())) / 1000
     );
@@ -301,7 +308,7 @@ export default function TokenDetailNew({ address }) {
                       </button>
                     )}
 
-                    {(tier > 0 &&
+                    {(maxTier > 0 &&
                       casperConnected &&
                       saleStartTime > 0 &&
                       currentTime <= saleEndTime &&
@@ -314,7 +321,7 @@ export default function TokenDetailNew({ address }) {
                           <BiMoney /> Buy {tokenSymbol} (WhiteList){" "}
                         </button>
                       )) ||
-                      (tier > 0 &&
+                      (maxTier > 0 &&
                         casperConnected &&
                         saleStartTime > 0 &&
                         currentTime <= saleEndTime &&
@@ -369,7 +376,7 @@ export default function TokenDetailNew({ address }) {
                       " " +
                       tokenSymbol}{" "}
                 </div>
-                {(tier > 0 && (
+                {(maxTier > 0 && (
                   <div>
                     {" "}
                     {Number((tier * csprPrice) / 10 ** 18).toFixed(2) +
@@ -377,7 +384,9 @@ export default function TokenDetailNew({ address }) {
                   </div>
                 )) || <div> This wallet is not whitelisted </div>}
                 <div style={{ paddingRight: "3rem" }}> {} </div>
-                {tier > 0 && <div> {Number(tier).toFixed(2) + " CSPR"} </div>}
+                {maxTier > 0 && (
+                  <div> {Number(tier).toFixed(2) + " CSPR"} </div>
+                )}
               </div>
               <hr className="bg-gray-100" />
               <div className="grid-box">

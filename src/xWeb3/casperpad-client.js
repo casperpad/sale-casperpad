@@ -134,7 +134,7 @@ class CasperpadClient extends CasperContractClient {
 
     const deployHash = await installWasmFile({
       publicKey,
-      paymentAmount: 3.5 * 10 ** 9,
+      paymentAmount: 3.3 * 10 ** 9,
       runtimeArgs: RuntimeArgs.fromMap({
         id: new CLString(projectId),
         amount: new CLU512(csprAmount),
@@ -154,7 +154,7 @@ class CasperpadClient extends CasperContractClient {
     const publicKey = CLPublicKey.fromHex(address);
     const deployHash = await contractCallWithSigner({
       publicKey,
-      paymentAmount: 3 * 10 ** 9,
+      paymentAmount: 0.7 * 10 ** 9,
       entryPoint: "claim",
       runtimeArgs: RuntimeArgs.fromMap({
         id: CLValueBuilder.string(projectId),
