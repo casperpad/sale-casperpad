@@ -1221,7 +1221,7 @@ hr {
 }
 .table td, .table th {
   padding: 0.75rem;
-  vertical-align: top;
+  vertical-align: middle;
   border-top: 1px solid #3f3f40;
 }
 .table td {
