@@ -137,10 +137,10 @@ export default function ProjectsClosed() {
 
       const saleEndTimes = await Promise.all(promises);
 
-      saleEndTimes.forEach((saleEndTime, index) => {
-        if (currentTime > saleEndTime)
-          setCsprProjects([...csprProjects, casperProjects[index]]);
+      const projects = casperProjects.filter((project, index) => {
+        return currentTime > saleEndTimes[index];
       });
+      setCsprProjects(projects);
     } catch (err) {}
   }, []);
 
