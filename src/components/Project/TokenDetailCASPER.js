@@ -126,7 +126,6 @@ export default function TokenDetailNew({ address }) {
       ).toFixed(5);
       setSoldAmount(soldAmount);
 
-      console.log("Token Capacity", response[9] / 10 ** response[3].toNumber());
       const totalPresaleAmount = (
         response[9] /
         10 ** response[3].toNumber()
