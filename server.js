@@ -1,7 +1,6 @@
 const express = require("express");
 const request = require("request");
 const path = require("path");
-const cors = require("cors");
 
 const app = express();
 const port = process.env.PORT || 8080;
@@ -15,7 +14,7 @@ app.use("/api/cors", (req, res, next) => {
   res.header("Content-Type", "application/json");
 
   console.log(req.method);
-  if(req.method === "OPTIONS") {
+  if (req.method === "OPTIONS") {
     res.send();
   } else {
     const targetURL = query.url; // Target-URL ie. https://example.com or http://example.com
@@ -54,4 +53,4 @@ app.all("*", (req, res) => {
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
-})
+});
