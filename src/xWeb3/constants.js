@@ -3,8 +3,8 @@
 // http://159.65.118.250:7777/rpc
 
 export const NODE_ADDRESS =
-  "http://35.80.165.243/api/cors?url=http://159.65.118.250:7777/rpc";
-// "https://picaswap.io/.netlify/functions/cors?url=http://159.65.118.250:7777/rpc";
+  // "http://staging.casper-pad.io/api/cors?url=http://159.65.118.250:7777/rpc";
+  "https://picaswap.io/.netlify/functions/cors?url=http://159.65.118.250:7777/rpc";
 // "http://192.168.116.53:11101/rpc";
 
 export const CHAIN_NAME = "casper-test";
