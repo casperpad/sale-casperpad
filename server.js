@@ -3,23 +3,26 @@ const request = require("request");
 const path = require("path");
 
 const app = express();
-const port = process.env.PORT || 8080;
+const PORT = process.env.PORT || 8080;
 
-app.use("/api/cors", (req, res, next) => {
+app.use(express.json({ limit: "25mb" }));
+app.use(express.urlencoded({ limit: "25mb", extended: true }));
+app.use("/api/cors", function (req, res, next) {
   const { query } = req;
 
+  // Set CORS headers: allow all origins, methods, and headers: you may want to lock this down in a production environment
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Methods", "GET, PUT, PATCH, POST, DELETE");
-  res.header("Access-Control-Allow-Headers", "*");
-  res.header("Content-Type", "application/json");
+  res.header(
+    "Access-Control-Allow-Headers",
+    req.header("access-control-request-headers")
+  );
 
-  console.log(req.method);
   if (req.method === "OPTIONS") {
+    // CORS Preflight
     res.send();
   } else {
     const targetURL = query.url; // Target-URL ie. https://example.com or http://example.com
-
-    console.log(targetURL);
 
     if (!targetURL) {
       res.status(500).send({
@@ -33,24 +36,23 @@ app.use("/api/cors", (req, res, next) => {
         url: targetURL,
         method: req.method,
         json: req.body,
-        headers: req.headers,
+        headers: { Authorization: req.header("Authorization") },
       },
       function (error, response, body) {
         if (error) {
-          console.error("error: " + response.statusCode);
+          console.error("error: " + error);
         }
-        return;
       }
     ).pipe(res);
   }
 });
 
-app.use(express.static(path.join(__dirname, "build")));
-
-app.all("*", (req, res) => {
-  res.sendFile(path.resolve(__dirname, "build", "index.html"));
+app.use(express.static(path.resolve(__dirname, "build")));
+app.use("*", (req, res) => {
+  res.sendFile(path.resolve(__dirname, "build/index.html"));
 });
 
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+app.listen(PORT, (err) => {
+  if (err) throw err;
+  console.log(`> Ready on http://localhost:${PORT}`);
 });
