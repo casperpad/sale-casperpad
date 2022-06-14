@@ -4,29 +4,24 @@ import Modal from "react-bootstrap/Modal";
 import Spinner from "react-bootstrap/Spinner";
 import { Toast } from "react-bootstrap";
 
-import { whitelist as whitelistNew } from "../../contract_info/whitelistCASPER";
-
 import useNetworkStatus from "../../store/useNetworkStatus";
-import { initClient, getAccountHashString } from "../../xWeb3";
+import { initClient } from "../../xWeb3";
 
 import { CasperClient } from "casper-js-sdk";
 import { NODE_ADDRESS } from "../../xWeb3/constants";
-
-const keccak256 = require("keccak256");
-const { MerkleTree } = require("merkletreejs");
 
 const BuyModal = (props) => {
   const {
     isOpen,
     setIsOpen,
-    projectId,
-    projectName,
     tokenSymbol,
-    tokenDecimals,
-    cspr_token,
-    token_cspr,
     tier,
-    merkleRoot,
+    vestAmount,
+    verified,
+    proof,
+    tokenPrice,
+    contractAddress,
+    fetchData,
   } = props;
   const [isOpenVest, setIsOpenVest] = useState(false);
   const [showToast, setShowToast] = useState(false);
@@ -34,10 +29,8 @@ const BuyModal = (props) => {
   const [buyTokenAmount, setBuyTokenAmount] = useState(0);
   const [toastText, setToastText] = useState("");
   const [loading, setLoading] = useState(false);
-  const [proof, setProof] = useState();
 
-  const { casperConnected, casperAddress, setProjectLoading } =
-    useNetworkStatus();
+  const { casperConnected, casperAddress } = useNetworkStatus();
 
   useEffect(() => {
     if (!casperConnected) setIsOpen(false);
@@ -48,17 +41,7 @@ const BuyModal = (props) => {
 
   useEffect(() => {
     if (!isOpen) return;
-    handleCsprChange(tier);
-
-    const leaves = whitelistNew[projectId].map(keccak256);
-    const tree = new MerkleTree(leaves, keccak256);
-
-    const leaf = keccak256(getAccountHashString(casperAddress));
-    const _proof = tree.getProof(leaf);
-
-    setProof(_proof);
-
-    const verified = tree.verify(_proof, leaf, merkleRoot);
+    handleCsprChange(tier - vestAmount);
 
     if (!verified) {
       setToastText("This wallet is not whitelisted");
@@ -68,22 +51,17 @@ const BuyModal = (props) => {
   }, [isOpen]);
 
   const handleCsprChange = (val) => {
-    if (Number(val) > tier) return;
-    if (Number(val) < 0) val = 0;
-    val = (Number(val) * 10000) % 10 !== 0 ? Number(val).toFixed(3) : val;
-    setBuyCsprAmount(val);
-    setBuyTokenAmount(
-      ((Number(val) * cspr_token) / 10 ** tokenDecimals).toFixed(3)
-    );
+    let csprAmount = Number(val);
+    if (val < 0 || val > tier - vestAmount) csprAmount = buyCsprAmount;
+    setBuyCsprAmount(csprAmount);
+    setBuyTokenAmount(csprAmount / tokenPrice);
   };
 
   const handleTokenChange = (val) => {
-    if (Number(val) < 0) val = 0;
-    const csprAmount = (Number(val) * token_cspr) / 10 ** 9;
-    if (csprAmount > tier) return;
-    val = (Number(val) * 10000) % 10 !== 0 ? Number(val).toFixed(3) : val;
-    setBuyTokenAmount(val);
-    setBuyCsprAmount(Number(csprAmount).toFixed(3));
+    let csprAmount = Number(val) * tokenPrice;
+    if (val < 0 || val > tier - vestAmount) csprAmount = buyCsprAmount;
+    setBuyCsprAmount(csprAmount);
+    setBuyTokenAmount(csprAmount / tokenPrice);
   };
 
   async function handleVest() {
@@ -92,12 +70,12 @@ const BuyModal = (props) => {
 
     try {
       setLoading(true);
-      const casperpadClient = await initClient();
-      const deployHash = await casperpadClient.addInvest(
-        projectName,
+      const casperpadClient = await initClient(contractAddress);
+      const deployHash = await casperpadClient.createOrder(
+        casperAddress,
         Number(buyCsprAmount) * 10 ** 9,
         proof,
-        casperAddress
+        tier * 10 ** 9
       );
       const interval = setInterval(async () => {
         const casperClient = new CasperClient(NODE_ADDRESS);
@@ -108,7 +86,7 @@ const BuyModal = (props) => {
           handleClose();
           if (deployResult.execution_results[0].result.Success) {
             setIsOpenVest(true);
-            setProjectLoading(true, 0);
+            fetchData();
           } else if (deployResult.execution_results[0].result.Failure) {
             setToastText("Vest failed!");
             setShowToast(true);
@@ -165,7 +143,8 @@ const BuyModal = (props) => {
                     >
                       <div className="text-white m-auto">
                         {" "}
-                        Your MAX buyable amount is: {tier}CSPR! <br />
+                        Your MAX buyable amount is: {tier -
+                          vestAmount}CSPR! <br />
                       </div>
                     </div>
                     <div
