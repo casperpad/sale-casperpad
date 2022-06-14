@@ -1,110 +1,74 @@
 import { CasperContractClient, helpers, utils } from "casper-js-client-helper";
 
-import { concat } from "@ethersproject/bytes";
-
 import {
-  CLKey,
   CLAccountHash,
   CLValueBuilder,
-  CLValueParsers,
   CLPublicKey,
   RuntimeArgs,
-  CLString,
+  CLU256,
   CLU512,
   decodeBase16,
 } from "casper-js-sdk";
 
-import { installWasmFile, contractCallWithSigner } from "./utils";
-import { CASPERIDO_CONTRACT_HASH } from "./constants";
+import {
+  installWasmFile,
+  contractCallWithSigner,
+  keyAndValueToHex,
+} from "./utils";
 
 const { setClient, contractSimpleGetter } = helpers;
 
-const PRE_INVEST_WASM_PATH = "/pre_invest.wasm";
+const PRE_INVEST_WASM_PATH = "/pre_create_order.wasm";
 
 class CasperpadClient extends CasperContractClient {
   async setContractHash(hash) {
     const { contractPackageHash, namedKeys } = await setClient(
       this.nodeAddress,
       hash,
-      ["projects", "tiers", "invests", "claims"]
+      [
+        "auction_end_time",
+        "auction_start_time",
+        "auction_token_capacity",
+        "auction_token_price",
+        "pay_token",
+        "claims",
+        "creator",
+        "factory_contract",
+        "info",
+        "launch_time",
+        "merkle_root",
+        "orders",
+        "reentrancy_guard",
+        "schedules",
+        "total_participants",
+        "sold_amount",
+      ]
     );
     this.contractHash = hash;
     this.contractPackageHash = contractPackageHash;
     this.namedKeys = namedKeys;
   }
 
-  async getTierDataOfAccount(accountHash, projectId, namedKey) {
-    const finalBytes = concat([
-      CLValueParsers.toBytes(
-        new CLKey(new CLAccountHash(decodeBase16(accountHash)))
-      ).unwrap(),
-      CLValueParsers.toBytes(CLValueBuilder.string(projectId)).unwrap(),
-    ]);
-
-    const encodedBytes = Buffer.from(finalBytes).toString("base64");
+  async queryContractDictionary(dictionary, key) {
     const result = await utils.contractDictionaryGetter(
       this.nodeAddress,
-      encodedBytes,
-      this.namedKeys[namedKey]
+      key,
+      this.namedKeys[dictionary]
     );
     return result;
   }
 
-  async getClaimedToken(accountHash, projectId, scheduleId) {
-    const finalBytes = concat([
-      CLValueParsers.toBytes(CLValueBuilder.string(projectId)).unwrap(),
-      CLValueParsers.toBytes(
-        new CLKey(new CLAccountHash(decodeBase16(accountHash)))
-      ).unwrap(),
-      CLValueParsers.toBytes(CLValueBuilder.u8(scheduleId)).unwrap(),
-    ]);
-
-    const encodedBytes = Buffer.from(finalBytes).toString("base64");
-    const result = await utils.contractDictionaryGetter(
-      this.nodeAddress,
-      encodedBytes,
-      this.namedKeys["claims"]
-    );
-    return result;
+  async order_of(account) {
+    return await this.queryContractDictionary("orders", account);
   }
 
-  async getProjectUrefById(project_id) {
-    const key = CLValueBuilder.string(project_id);
-    const keyBytes = CLValueParsers.toBytes(key).unwrap();
-    const itemKey = Buffer.from(keyBytes).toString("base64");
-    const result = await utils.contractDictionaryGetter(
-      this.nodeAddress,
-      itemKey,
-      this.namedKeys["projects"]
+  async claim_of(account, time) {
+    const clAccount = CLValueBuilder.key(
+      new CLAccountHash(decodeBase16(account))
     );
-    return result;
-  }
-
-  async getDataByFieldName(project_uref, field_name) {
-    const name_field = CLValueBuilder.string(field_name);
-    const finalBytes = concat([CLValueParsers.toBytes(name_field).unwrap()]);
-    const encodedBytes = Buffer.from(finalBytes).toString("base64");
-    const result = await utils.contractDictionaryGetter(
-      this.nodeAddress,
-      encodedBytes,
-      CLValueBuilder.uref(
-        project_uref.data,
-        project_uref.accessRights
-      ).toFormattedStr()
-    );
-    return result;
-  }
-
-  async queryContractDictionary(publicKey, namedKey) {
-    const key = new CLKey(new CLAccountHash(publicKey.toAccountHash()));
-    const keyBytes = CLValueParsers.toBytes(key).unwrap();
-    const itemKey = Buffer.from(keyBytes).toString("base64");
-    const result = await utils.contractDictionaryGetter(
-      this.nodeAddress,
-      itemKey,
-      this.namedKeys[namedKey]
-    );
-    return result;
+    const clTime = CLValueBuilder.u64(time);
+    const key = keyAndValueToHex(clAccount, clTime);
+    return await this.queryContractDictionary("claims", key);
   }
 
   async queryContract(key) {
@@ -117,12 +81,12 @@ class CasperpadClient extends CasperContractClient {
     const accountHash = CLPublicKey.fromHex(account)
       .toAccountHashStr()
       .slice(13);
-    const ownerHashHex = await this.queryContract("owner");
+    const ownerHashHex = await this.queryContract("creator");
     const ownerHash = utils.toAccountHashString(ownerHashHex);
     return accountHash === ownerHash;
   }
 
-  async addInvest(projectId, csprAmount, proof, address) {
+  async createOrder(address, csprAmount, proof, tier) {
     const publicKey = CLPublicKey.fromHex(address);
 
     const converted_proof = proof.map((proofItem) => {
@@ -134,15 +98,13 @@ class CasperpadClient extends CasperContractClient {
 
     const deployHash = await installWasmFile({
       publicKey,
-      paymentAmount: 3.3 * 10 ** 9,
+      paymentAmount: 7 * 10 ** 9,
       runtimeArgs: RuntimeArgs.fromMap({
-        id: new CLString(projectId),
+        tier: new CLU256(tier),
         amount: new CLU512(csprAmount),
         proof: CLValueBuilder.list(converted_proof),
-        ido_contract_hash: CLValueBuilder.key(
-          CLValueBuilder.byteArray(
-            decodeBase16(CASPERIDO_CONTRACT_HASH.slice(5))
-          )
+        ido_contract_hash: CLValueBuilder.string(
+          `contract-${this.contractHash}`
         ),
       }),
       pathToContract: PRE_INVEST_WASM_PATH,
@@ -150,15 +112,16 @@ class CasperpadClient extends CasperContractClient {
     return deployHash;
   }
 
-  async claim(projectId, scheduleId, address) {
+  async claim(address, time) {
     const publicKey = CLPublicKey.fromHex(address);
+
     const deployHash = await contractCallWithSigner({
       publicKey,
-      paymentAmount: 0.7 * 10 ** 9,
+      contractHash: this.contractHash,
+      paymentAmount: 2 * 10 ** 9,
       entryPoint: "claim",
       runtimeArgs: RuntimeArgs.fromMap({
-        id: CLValueBuilder.string(projectId),
-        schedule_id: CLValueBuilder.u8(scheduleId),
+        schedule_time: CLValueBuilder.u64(time),
       }),
       cb: (deployHash) => this.addPendingDeploy("claim", deployHash),
     });

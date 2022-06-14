@@ -1,16 +1,13 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useState } from "react";
-
-import { casperProjects } from "../../assets/variables";
+import React from "react";
 
 import CustomCardCASPER from "./CustomCardCASPER";
 
-import { initClient } from "../../xWeb3";
 import useNetworkStatus from "../../store/useNetworkStatus";
 // const keccak256 = require('keccak256');
 // const { MerkleTree } = require('merkletreejs');
 
-export default function ProjectsOpen() {
+export default function ProjectsOpen({ casperProjects = [] }) {
   // const {account} = useEthers();
 
   // useEffect( () => {
@@ -82,49 +79,6 @@ export default function ProjectsOpen() {
 
   const { showCasperProjects } = useNetworkStatus();
 
-  const [csprProjects, setCsprProjects] = useState([]);
-  const currentTime = new Date().getTime();
-
-  useEffect(async () => {
-    try {
-      const casperpadClient = await initClient();
-
-      let promises = casperProjects.map(async (project) => {
-        return await casperpadClient.getProjectUrefById(
-          project.contractAddress
-        );
-      });
-
-      const projectUrefs = await Promise.all(promises);
-
-      promises = projectUrefs.map(async (projectUref) => {
-        return await casperpadClient.getDataByFieldName(
-          projectUref,
-          "sale_start_time"
-        );
-      });
-
-      const saleStartTimes = await Promise.all(promises);
-
-      promises = projectUrefs.map(async (projectUref) => {
-        return await casperpadClient.getDataByFieldName(
-          projectUref,
-          "sale_end_time"
-        );
-      });
-
-      const saleEndTimes = await Promise.all(promises);
-
-      const projects = casperProjects.filter((project, index) => {
-        return (
-          currentTime > saleStartTimes[index] &&
-          currentTime < saleEndTimes[index]
-        );
-      });
-      setCsprProjects(projects);
-    } catch (err) {}
-  }, []);
-
   return (
     <>
       <h1 className="text-center font-weight-bold text-white project-title">
@@ -132,10 +86,10 @@ export default function ProjectsOpen() {
       </h1>
       <section className="projects mx-auto">
         {showCasperProjects &&
-          csprProjects.map((project, index) => {
+          casperProjects.map((project, index) => {
             return (
               <CustomCardCASPER
-                key={index}
+                key={`casperopened_${index}`}
                 project={project}
                 status={"Opened"}
               />

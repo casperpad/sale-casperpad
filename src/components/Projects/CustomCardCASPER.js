@@ -1,5 +1,4 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 
 import {
   SiWebpack,
@@ -19,41 +18,39 @@ export default function CustomCardCASPER({ project, status }) {
   const [soldAmount, setSoldAmount] = useState(0);
   const [progressValue, setProgressValue] = useState(0);
   const [participants, setParticipants] = useState(0);
+  const [info, setInfo] = useState("");
 
-  useEffect(async () => {
-    try {
-      const casperpadClient = await initClient();
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const casperpadClient = await initClient(project.contractAddress);
 
-      const projectUref = await casperpadClient.getProjectUrefById(
-        project.contractAddress
-      );
-      const response = await Promise.all([
-        casperpadClient.getDataByFieldName(projectUref, "users_length"),
-        casperpadClient.getDataByFieldName(projectUref, "token_price"),
-        casperpadClient.getDataByFieldName(projectUref, "total_invests_amount"),
-        casperpadClient.getDataByFieldName(projectUref, "token_capacity"),
-        casperpadClient.getDataByFieldName(projectUref, "cspr_price"),
-        casperpadClient.getDataByFieldName(projectUref, "token_decimals"),
-      ]);
-      setParticipants(response[0].toNumber());
-      setSoldAmount(
-        (((response[2] / 10 ** 9) * response[4]) / response[1]).toFixed(2)
-      );
-      setTotalPresaleAmount(
-        (response[3] / 10 ** response[5].toNumber()).toFixed(2)
-      );
-      setProgressValue(((response[2] * 100) / response[3]).toFixed(2));
-      setProgressValue(
-        (
-          ((response[2] / 10 ** 9) * response[4] * 100) /
-          ((response[1] / 10 ** response[5].toNumber()) * response[3])
-        ).toFixed(2)
-      );
-    } catch (err) {}
+        const response = await Promise.all([
+          casperpadClient.queryContract("info"),
+          casperpadClient.queryContract("auction_token_capacity"),
+          casperpadClient.queryContract("total_participants"),
+          casperpadClient.queryContract("sold_amount"),
+        ]);
+
+        const info = JSON.parse(response[0]);
+        setInfo(info);
+
+        setParticipants(response[2].toNumber());
+
+        const totalPresaleAmount = response[1] / 10 ** info.token.decimals;
+        setTotalPresaleAmount(response[1] / 10 ** info.token.decimals);
+
+        const soldAmount = response[3] / 10 ** 9 / info.token.price;
+        setSoldAmount(response[3] / 10 ** 9 / info.token.price);
+        setProgressValue((soldAmount * 100) / totalPresaleAmount);
+      } catch (err) {}
+    }
+
+    fetchData();
   }, []);
 
   const handleGoDetail = (projectAddress) => {
-    window.location = "/project/casper/" + projectAddress;
+    window.location = "/project/casper/" + project.contractAddress;
   };
 
   return (
@@ -63,12 +60,12 @@ export default function CustomCardCASPER({ project, status }) {
     >
       <div className="custom-card-header">
         <div className="tokenLogo">
-          <img src={project.picture} alt="project profile"></img>
+          <img src={info && info.links.logo} alt="project profile"></img>
         </div>
       </div>
       <div className="custom-card-title">
         <div>
-          <strong>{project.name + " (" + project.tier + " Tiers" + ")"}</strong>
+          <strong>{info && info.name}</strong>
         </div>
         <div>
           <span
@@ -90,23 +87,26 @@ export default function CustomCardCASPER({ project, status }) {
         </div>
       </div>
       <hr className="card-hr" />
-      <div className="custom-card-body">{project.message}</div>
+      <div className="custom-card-body">{info && info.description}</div>
       <div className="custom-card-footer">
         <div className="information">
           <div>
             Token Price
             <br />
-            <span>${project.swap_rate}</span>
+            <span>{info && info.token.price}cspr</span>
           </div>
           <div>
             Cap
             <br />
-            <span>{project.cap}</span>
+            <span>
+              {info && (totalPresaleAmount * info.token.price).toLocaleString()}
+              cspr
+            </span>
           </div>
           <div>
             Access
             <br />
-            <span>{project.access}</span>
+            <span>Public</span>
           </div>
         </div>
         <div className="custom-progress-bar">
@@ -122,26 +122,26 @@ export default function CustomCardCASPER({ project, status }) {
           <ProgressBar now={progressValue} variant="pro" />
           <div className="progress-title">
             <span style={{ color: "white", fontWeight: "bold" }}>
-              {progressValue}%
+              {progressValue.toFixed(2)}%
             </span>
             <span style={{ color: "white", fontWeight: "bold" }}>
-              {soldAmount + "/" + totalPresaleAmount}
+              {soldAmount.toFixed(2) + "/" + totalPresaleAmount.toFixed(2)}
             </span>
           </div>
         </div>
       </div>
       <div className="custom-card-title">
         <div className="social-links">
-          <a href={project.webpackLink}>
+          <a href={info && info.links.webpackLink}>
             <SiWebpack className="social-link" />
           </a>
-          <a href={project.twitterLink}>
+          <a href={info && info.links.twitterLink}>
             <AiFillTwitterCircle className="social-link" />
           </a>
-          <a href={project.outlineLink}>
+          <a href={info && info.links.outlineLink}>
             <AiOutlineMedium className="social-link" />
           </a>
-          <a href={project.telegramLink}>
+          <a href={info && info.links.telegramLink}>
             <FaTelegramPlane className="social-link" />
           </a>
         </div>

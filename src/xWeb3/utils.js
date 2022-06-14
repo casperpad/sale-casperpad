@@ -1,10 +1,23 @@
 import { Signer, DeployUtil, CasperClient } from "casper-js-sdk";
-
 import { utils, constants } from "casper-js-client-helper";
+import { CLValueParsers } from "casper-js-sdk";
 
-import { NODE_ADDRESS, CASPERIDO_CONTRACT_HASH, CHAIN_NAME } from "./constants";
+import { NODE_ADDRESS, CHAIN_NAME } from "./constants";
+
+import { concat } from "@ethersproject/bytes";
+import blake from "blakejs";
 
 const { DEFAULT_TTL } = constants;
+
+export const keyAndValueToHex = (key, value) => {
+  const aBytes = CLValueParsers.toBytes(key).unwrap();
+  const bBytes = CLValueParsers.toBytes(value).unwrap();
+
+  const blaked = blake.blake2b(concat([aBytes, bBytes]), undefined, 32);
+  const hex = Buffer.from(blaked).toString("hex");
+
+  return hex;
+};
 
 const signDeploy = async (deploy, publicKey) => {
   const deployJSON = DeployUtil.deployToJson(deploy);
@@ -59,6 +72,7 @@ const contractCallFn = async ({
 
 export async function contractCallWithSigner({
   publicKey,
+  contractHash,
   paymentAmount,
   entryPoint,
   runtimeArgs,
@@ -68,7 +82,7 @@ export async function contractCallWithSigner({
 }) {
   //if(!this.contractHash) throw Error("Invalid Contract Hash");
   const deployHash = contractCallFn({
-    contractHash: CASPERIDO_CONTRACT_HASH.slice(5),
+    contractHash: contractHash,
     nodeAddress: NODE_ADDRESS,
     chainName: CHAIN_NAME,
     publicKey,

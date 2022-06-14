@@ -7,10 +7,7 @@ const useNetworkStatus = create((set) => ({
   binanceAddress: "",
   showCasperProjects: true,
   showBinanceProjects: true,
-  loading: [false, false],
-  projectLoading: false,
-  loaded: [false, false],
-  projectLoaded: false,
+  userDataLoading: false,
   setShowCasperProjects: (showCasperProjects) =>
     set(() => ({ showCasperProjects })),
   setShowBinanceProjects: (showBinanceProjects) =>
@@ -27,17 +24,10 @@ const useNetworkStatus = create((set) => ({
       const binanceConnected = address ? true : false;
       return { binanceAddress, binanceConnected };
     }),
-  setProjectLoading: (status, index) =>
-    set((state) => {
-      let loading = state.loading;
-      loading[index] = status;
-      return { loading, projectLoading: loading[0] || loading[1] };
-    }),
-  setProjectLoaded: (status, index) =>
-    set((state) => {
-      let loaded = state.loaded;
-      loaded[index] = status;
-      return { loaded, projectLoaded: loaded[0] && loaded[1] };
+  setUserDataLoading: (loading) =>
+    set(() => {
+      const userDataLoading = loading;
+      return { userDataLoading };
     }),
 }));
 

@@ -11,7 +11,7 @@ import CustomCardSkyAdvisor from "./CustomCardSkyAdvisor";
 import CustomCardSkypublic from "./CustomCardSkypublic";
 import CustomCardCASPER from "./CustomCardCASPER";
 
-import { projects, casperProjects } from "../../assets/variables";
+import { projects } from "../../assets/variables";
 
 import { whitelist } from "../../contract_info/whitelist";
 import { whitelist as whitelistSeed } from "../../contract_info/whitelistSeed";
@@ -25,11 +25,10 @@ import { useIsAdmin as useIsSkyAdmin } from "../../util/interactSkypublic";
 import useNetworkStatus from "../../store/useNetworkStatus";
 
 import { useEthers } from "@usedapp/core";
-import { initClient } from "../../xWeb3";
 const keccak256 = require("keccak256");
 const { MerkleTree } = require("merkletreejs");
 
-export default function ProjectsClosed() {
+export default function ProjectsClosed({ casperProjects = [] }) {
   const [isAdmin, setIsAdmin] = useState(false);
   const [isSkyAdmin, setIsSkyAdmin] = useState(false);
   const [verifiedPrivate, setVerifiedPrivate] = useState();
@@ -113,37 +112,6 @@ export default function ProjectsClosed() {
     console.log("verifiedSkyAdvisor", _verified);
   }, [account]);
 
-  const [csprProjects, setCsprProjects] = useState([]);
-  const currentTime = new Date().getTime();
-
-  useEffect(async () => {
-    try {
-      const casperpadClient = await initClient();
-
-      let promises = casperProjects.map(async (project) => {
-        return await casperpadClient.getProjectUrefById(
-          project.contractAddress
-        );
-      });
-
-      const projectUrefs = await Promise.all(promises);
-
-      promises = projectUrefs.map(async (projectUref) => {
-        return await casperpadClient.getDataByFieldName(
-          projectUref,
-          "sale_end_time"
-        );
-      });
-
-      const saleEndTimes = await Promise.all(promises);
-
-      const projects = casperProjects.filter((project, index) => {
-        return currentTime > saleEndTimes[index];
-      });
-      setCsprProjects(projects);
-    } catch (err) {}
-  }, []);
-
   return (
     <>
       <h1 className="text-center font-weight-bold text-white project-title">
@@ -177,10 +145,10 @@ export default function ProjectsClosed() {
             );
           })}
         {showCasperProjects &&
-          csprProjects.map((project, index) => {
+          casperProjects.map((project, index) => {
             return (
               <CustomCardCASPER
-                key={index}
+                key={`casperclosed_${index}`}
                 project={project}
                 status={"Closed"}
               />
