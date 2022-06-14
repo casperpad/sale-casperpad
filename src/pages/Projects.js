@@ -17,11 +17,24 @@ export default function Projects() {
 
   useEffect(() => {
     async function fetchData() {
+      const project = {
+        contractAddress: "aaaaaaaaaaaaaaaaa",
+        startTime: Date.now() - 100000,
+        endTime: Date.now() - 1000,
+      };
+
+      setCasperProjectsOpened([project]);
+      setCasperProjectsComing([project]);
+      setCasperProjectsClosed([project]);
+
       const factoryClient = await initFactoryClient();
       const auctions = await factoryClient.queryContract("auctions");
 
+      setCasperProjectsOpened([]);
+      setCasperProjectsComing([]);
+      setCasperProjectsClosed([]);
+
       auctions.forEach((auction) => {
-        console.log(auction);
         const project = {
           contractAddress: utils.toAccountHashString(auction.data[0].data),
           startTime: auction.data[1].data.toNumber(),

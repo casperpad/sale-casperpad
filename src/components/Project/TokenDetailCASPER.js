@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 
 import {
   SiWebpack,
@@ -180,70 +181,82 @@ export default function TokenDetailNew(props) {
             </section>
           </Col>
           <Col sm={7}>
-            <section className="custom-card-detail text-white">
-              <div className="grid-box">
-                <div> Your balance </div>
-                <div> Allocation </div>
-              </div>
-              <div className="grid-box text-white">
-                <div style={{ paddingRight: "3rem" }}>
-                  {" "}
-                  {balance < 0 ? "-" : balance + " " + info.token.symbol}{" "}
+            <SkeletonTheme baseColor="#ffffff10" highlightColor="#ffffff20">
+              <section className="custom-card-detail text-white">
+                <div className="grid-box">
+                  <div> Your balance </div>
+                  <div> Allocation </div>
                 </div>
-                {(tier > 0 && (
-                  <div> {(tier - vestAmount).toFixed(2) + " CSPR"} </div>
-                )) || <div> This wallet is not whitelisted </div>}
-              </div>
-              <hr className="bg-gray-100" />
-              <div className="grid-box">
-                <div className="text-white"> {status} </div>
-              </div>
-              <hr className="bg-gray-100" />
-              <div className="grid-box">
-                <div> Total Locked </div>
-                <div> Remaining Allocation: </div>
-              </div>
-              <div className="grid-box text-white">
-                <div> {soldAmount.toFixed(5) + " " + info.token.symbol} </div>
-                <div>
-                  {" "}
-                  {(totalPresaleAmount - soldAmount).toFixed(5) +
-                    " " +
-                    info.token.symbol}{" "}
+                <div className="grid-box text-white">
+                  <div style={{ paddingRight: "3rem" }}>
+                    {" "}
+                    {userDataLoading ? (
+                      <Skeleton />
+                    ) : balance < 0 ? (
+                      "-"
+                    ) : (
+                      balance + " " + info.token.symbol
+                    )}{" "}
+                  </div>
+                  {userDataLoading ? (
+                    <Skeleton />
+                  ) : (
+                    (tier > 0 && (
+                      <div> {(tier - vestAmount).toFixed(2) + " CSPR"} </div>
+                    )) || <div> This wallet is not whitelisted </div>
+                  )}
                 </div>
-              </div>
-              <div className="grid-box text-white">
-                <div>
-                  {" "}
-                  {(soldAmount * info.token.price).toFixed(5) + " CSPR"}{" "}
+                <hr className="bg-gray-100" />
+                <div className="grid-box">
+                  <div className="text-white"> {status} </div>
                 </div>
-              </div>
-              <hr className="bg-gray-100" />
-              <div className="custom-card-footer detail-bar">
-                <div className="custom-progress-bar">
-                  <div className="progress-title">
-                    <span>Progress</span>
-                    <span>
-                      Participants{" "}
-                      <span style={{ color: "white", fontWeight: "bold" }}>
-                        {participants}
+                <hr className="bg-gray-100" />
+                <div className="grid-box">
+                  <div> Total Locked </div>
+                  <div> Remaining Allocation: </div>
+                </div>
+                <div className="grid-box text-white">
+                  <div> {soldAmount.toFixed(5) + " " + info.token.symbol} </div>
+                  <div>
+                    {" "}
+                    {(totalPresaleAmount - soldAmount).toFixed(5) +
+                      " " +
+                      info.token.symbol}{" "}
+                  </div>
+                </div>
+                <div className="grid-box text-white">
+                  <div>
+                    {" "}
+                    {(soldAmount * info.token.price).toFixed(5) + " CSPR"}{" "}
+                  </div>
+                </div>
+                <hr className="bg-gray-100" />
+                <div className="custom-card-footer detail-bar">
+                  <div className="custom-progress-bar">
+                    <div className="progress-title">
+                      <span>Progress</span>
+                      <span>
+                        Participants{" "}
+                        <span style={{ color: "white", fontWeight: "bold" }}>
+                          {participants}
+                        </span>
                       </span>
-                    </span>
-                  </div>
-                  <ProgressBar now={progressValue} variant="pro" />
-                  <div className="progress-title">
-                    <span style={{ color: "white", fontWeight: "bold" }}>
-                      {progressValue.toFixed(5)}%
-                    </span>
-                    <span style={{ color: "white", fontWeight: "bold" }}>
-                      {soldAmount.toFixed(5) +
-                        "/" +
-                        totalPresaleAmount.toFixed(5)}
-                    </span>
+                    </div>
+                    <ProgressBar now={progressValue} variant="pro" />
+                    <div className="progress-title">
+                      <span style={{ color: "white", fontWeight: "bold" }}>
+                        {progressValue.toFixed(5)}%
+                      </span>
+                      <span style={{ color: "white", fontWeight: "bold" }}>
+                        {soldAmount.toFixed(5) +
+                          "/" +
+                          totalPresaleAmount.toFixed(5)}
+                      </span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </section>
+              </section>
+            </SkeletonTheme>
           </Col>
         </Row>
       </Container>

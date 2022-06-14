@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import Spinner from "react-bootstrap/Spinner";
 
 import { initClient } from "../../xWeb3";
@@ -19,7 +20,7 @@ const ScheduleTable = (props) => {
     scheduleClaimed,
   } = props;
 
-  const { casperAddress } = useNetworkStatus();
+  const { casperAddress, userDataLoading } = useNetworkStatus();
 
   const [scheduleAmount, setScheduleAmount] = useState(0);
   const [percentage, setPercentage] = useState(0);
@@ -57,33 +58,47 @@ const ScheduleTable = (props) => {
 
   return (
     <tr>
-      <td>{index + 1}</td>
-      <td>{scheduleAmount + " " + tokenSymbol}</td>
-      <td>{percentage + "%"}</td>
-      <td>{new Date(time).toLocaleString("en-US")}</td>
-      <td>
-        {currentTime >= time && scheduleClaimed ? scheduleAmount : 0}
-        {" " + tokenSymbol}
-      </td>
-      <td>
-        {(pending && <Spinner animation="border" />) ||
-          (currentTime >= time &&
-            scheduleClaimed === 0 &&
-            verified &&
-            vestAmount && (
-              <>
-                <button
-                  className="btn btn-wallet wallet-connected"
-                  onClick={() => handleClaim()}
-                >
-                  {" "}
-                  Claim{" "}
-                </button>
-              </>
-            )) ||
-          (currentTime >= time && "unlocked") ||
-          "waiting..."}
-      </td>
+      <SkeletonTheme baseColor="#ffffff10" highlightColor="#ffffff20">
+        <td>{index + 1}</td>
+        <td>
+          {userDataLoading ? <Skeleton /> : scheduleAmount + " " + tokenSymbol}
+        </td>
+        <td>{percentage + "%"}</td>
+        <td>{new Date(time).toLocaleString("en-US")}</td>
+        <td>
+          {userDataLoading ? (
+            <Skeleton />
+          ) : (
+            (currentTime >= time && scheduleClaimed ? scheduleAmount : 0) +
+            " " +
+            tokenSymbol
+          )}
+          {}
+        </td>
+        <td>
+          {userDataLoading ? (
+            <Skeleton />
+          ) : (
+            (pending && <Spinner animation="border" />) ||
+            (currentTime >= time &&
+              scheduleClaimed === 0 &&
+              verified &&
+              vestAmount && (
+                <>
+                  <button
+                    className="btn btn-wallet wallet-connected"
+                    onClick={() => handleClaim()}
+                  >
+                    {" "}
+                    Claim{" "}
+                  </button>
+                </>
+              )) ||
+            (currentTime >= time && "unlocked") ||
+            "waiting..."
+          )}
+        </td>
+      </SkeletonTheme>
     </tr>
   );
 };
