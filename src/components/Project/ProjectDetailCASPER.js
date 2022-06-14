@@ -61,7 +61,7 @@ export default function ProjectDetailCASPER(props) {
                       </tr>
                       <tr>
                         <td>Total Funds Sold</td>
-                        <td>{soldAmount * info.token.price + " "}CSPR</td>
+                        <td>{soldAmount * info.token.price + " CSPR"}</td>
                       </tr>
                     </tbody>
                   </Table>
