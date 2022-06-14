@@ -3,7 +3,7 @@
 // http://159.65.118.250:7777/rpc
 
 export const NODE_ADDRESS =
-  "http://staging.casper-pad.io/api/cors?url=http://159.65.118.250:7777/rpc";
+  "https://staging.casper-pad.io/api/cors?url=http://159.65.118.250:7777/rpc";
 // "https://picaswap.io/.netlify/functions/cors?url=http://159.65.118.250:7777/rpc";
 // "http://192.168.116.53:11101/rpc";
 
