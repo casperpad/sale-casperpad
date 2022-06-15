@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 
@@ -53,14 +54,10 @@ export default function CustomCardCASPER({ project, status }) {
     fetchData();
   }, []);
 
-  const handleGoDetail = (projectAddress) => {
-    window.location = "/project/casper/" + project.contractAddress;
-  };
-
   return (
-    <section
+    <Link
       className="custom-card cursor-pointer"
-      onClick={() => handleGoDetail(project.contractAddress)}
+      to={!info ? "" : "/project/casper/" + project.contractAddress}
     >
       <SkeletonTheme baseColor="#ffffff10" highlightColor="#ffffff20">
         <div className="custom-card-header">
@@ -172,7 +169,7 @@ export default function CustomCardCASPER({ project, status }) {
           </a>
         </div>
       </div>
-    </section>
+    </Link>
   );
 }
 
