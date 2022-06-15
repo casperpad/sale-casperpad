@@ -62,8 +62,6 @@ export default function Projects() {
   const [verified, setVerified] = useState(false);
   const [whitelist, setWhitelist] = useState([]);
 
-  console.log("Rendering project");
-
   const { casperAddress, setUserDataLoading } = useNetworkStatus();
 
   const verify = (account, root) => {
