@@ -62,6 +62,8 @@ export default function Projects() {
   const [verified, setVerified] = useState(false);
   const [whitelist, setWhitelist] = useState([]);
 
+  console.log("Rendering project");
+
   const { casperAddress, setUserDataLoading } = useNetworkStatus();
 
   const verify = (account, root) => {
@@ -139,14 +141,14 @@ export default function Projects() {
       else if (Date.now() < endTime) setStatus("Opened");
       else setStatus("Closed");
 
-      fetchCustomData(casperAddress);
+      fetchCustomData();
 
       setLoaded(true);
     } catch (err) {}
     setLoading(false);
   }
 
-  async function fetchCustomData(casperAddress) {
+  async function fetchCustomData() {
     setIsAdmin(false);
     setTier(0);
     setBalance(-1);
@@ -207,9 +209,11 @@ export default function Projects() {
   useEffect(() => {
     if (network === "casper") {
       async function fetchTierData() {
-        const res = await fetch(`../../tiers/${option}.json`);
-        const data = await res.json();
-        setWhitelist(data.tiers);
+        try {
+          const res = await fetch(`../../tiers/${option}.json`);
+          const data = await res.json();
+          setWhitelist(data.tiers);
+        } catch (err) {}
       }
 
       fetchTierData();
