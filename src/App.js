@@ -1,11 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Route, Switch } from "react-router-dom";
-
-import { Provider } from "react-redux";
-import store from "./redux/store";
+import { Route, BrowserRouter } from "react-router-dom";
 import { useEffect } from "react";
-
-import "./App.css";
+import { useEthers } from "@usedapp/core";
+import { Signer } from "casper-js-sdk";
 
 import Home from "./pages/Home";
 import Projects from "./pages/Projects";
@@ -14,10 +11,8 @@ import Error from "./pages/Error";
 import Project from "./pages/Project";
 
 import useNetworkStatus from "./store/useNetworkStatus";
-// import { useWeb3React } from "@web3-react/core";
-import { useEthers } from "@usedapp/core";
 
-import { Signer } from "casper-js-sdk";
+import "./App.css";
 
 function App() {
   const { setCasperAddress, setBinanceAddress } = useNetworkStatus();
@@ -57,25 +52,23 @@ function App() {
 
   return (
     <>
-      <Provider store={store}>
-        <Switch>
-          <Route exact path="/home">
-            <Home />
-          </Route>
-          <Route exact path="/">
-            <Projects />
-          </Route>
-          <Route path="/project/:network/:address">
-            <Project />
-          </Route>
-          <Route exact path="/staking/">
-            <Staking />
-          </Route>
-          <Route exact path="/error/">
-            <Error />
-          </Route>
-        </Switch>
-      </Provider>
+      <BrowserRouter>
+        <Route exact path="/home">
+          <Home />
+        </Route>
+        <Route exact path="/">
+          <Projects />
+        </Route>
+        <Route path="/project/:network/:address">
+          <Project />
+        </Route>
+        <Route exact path="/staking/">
+          <Staking />
+        </Route>
+        <Route exact path="/error/">
+          <Error />
+        </Route>
+      </BrowserRouter>
     </>
   );
 }

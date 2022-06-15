@@ -5,8 +5,9 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import Background from "../components/Background";
 import ProjectsOpen from "../components/Projects/ProjectsOpen";
-// import ProjectsComing from '../components/Projects/ProjectsComing';
 import ProjectsClosed from "../components/Projects/ProjectsClosed";
+
+import binanceProjects from "../config/binance";
 
 import { initFactoryClient } from "../xWeb3";
 
@@ -16,7 +17,7 @@ export default function Projects() {
   const [casperProjectsClosed, setCasperProjectsClosed] = useState([]);
 
   useEffect(() => {
-    async function fetchData() {
+    async function fetchCasperData() {
       const project = {
         contractAddress: "aaaaaaaaaaaaaaaaa",
         startTime: Date.now() - 100000,
@@ -50,8 +51,15 @@ export default function Projects() {
         }
       });
     }
+    // async function fetchBinanceData() {
+    //   try {
+    //     const res = await fetch(`../../tiers/${option}.json`);
+    //     const data = await res.json();
+    //     setWhitelist(data.tiers);
+    //   } catch (err) {}
+    // }
 
-    fetchData();
+    fetchCasperData();
   }, []);
 
   return (
