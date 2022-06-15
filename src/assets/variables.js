@@ -8,38 +8,6 @@ import tokenSkyLogo from "./img/Skybridge_Logo.png";
 import card_0 from "./img/green_1.png";
 import card_1 from "./img/green_2.png";
 
-const casperProjects = [
-  {
-    contractAddress: "skybridge",
-    tier: 6,
-    picture: tokenLogo,
-    name: "SkyBridge",
-    swap_rate: "0.05",
-    cap: "$50",
-    access: "Public",
-    message: "SkyBridge",
-    webpackLink: "/",
-    twitterLink: "/",
-    outlineLink: "/",
-    telegramLink: "/",
-  },
-  {
-    contractAddress: "swappery",
-    tier: 8,
-    picture: tokenLogo,
-    name: "Swappery",
-    swap_rate: "0.01",
-    cap: "$100,000",
-    access: "Public",
-    message:
-      "The Swappery is the first cross-chain Decentralized Exchange (DEX), built for the Casper Network (https://casper.network/en/network). Their platform will give thousands of Casper holders the opportunity to make great use of their Casper tokens.",
-    webpackLink: "/",
-    twitterLink: "/",
-    outlineLink: "/",
-    telegramLink: "/",
-  },
-];
-
 const projects = [
   {
     contractAddress: "swappery-private-sale",
@@ -347,4 +315,4 @@ const cards = [
   },
 ];
 
-export { projects, casperProjects, rounds, advisors, stakings, cards };
+export { projects, rounds, advisors, stakings, cards };
