@@ -10,4 +10,4 @@ export const NODE_ADDRESS =
 export const CHAIN_NAME = "casper-test";
 
 export const FACTORY_CONTRACT_HASH =
-  "hash-8e2c8b428e9b31300510a67aee36411a8a7b6dc5565595596a096d29c77c4927";
+  "hash-354d66d67c652bddd250242c696f8f615c16779fbf9d8144060ba295e9e767f9";

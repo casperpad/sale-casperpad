@@ -102,7 +102,7 @@ export default function CustomCardCASPER({ project, status }) {
               Token Price
               <br />
               <span>
-                {!info ? <Skeleton height={20} /> : info.token.price + "cspr"}
+                {!info ? <Skeleton height={20} /> : info.token.price + " cspr"}
               </span>
             </div>
             <div>
@@ -113,7 +113,7 @@ export default function CustomCardCASPER({ project, status }) {
                   <Skeleton height={20} />
                 ) : (
                   (totalPresaleAmount * info.token.price).toLocaleString() +
-                  "cspr"
+                  " cspr"
                 )}
               </span>
             </div>
