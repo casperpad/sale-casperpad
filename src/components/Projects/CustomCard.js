@@ -8,8 +8,7 @@ import {
     useSoldAmount,
     useGetParticipants
 } from '../../util/interact';
-import { 
-    whitelistOfTiers,
+import {
     preSaleAmount
 } from '../../contract_info/vestingData';
 

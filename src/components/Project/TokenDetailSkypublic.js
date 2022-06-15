@@ -17,17 +17,12 @@ import {
     useBalanceOfVesting,
     useGetTierOfAccount,
     useIsSoldWhitelist,
-    useTempSoldAmount,
-    useVestingContractMethod, 
-    useSwprContractMethod,
-    useGetWLEndTime
+    useTempSoldAmount
 } from '../../util/interactSkypublic';
 import { 
     swprTokenAddress, 
-    busdTokenAddress, 
-    usdtTokenAddress,
+    busdTokenAddress,
     whitelistOfTiers,
-    whitelistOfTiersLength,
     saleStartTime,
     saleEndTime,
     preSaleAmount,

@@ -17,17 +17,12 @@ import {
     useBalanceOfVesting,
     useGetTierOfAccount,
     useIsSoldWhitelist,
-    useTempSoldAmount,
-    useVestingContractMethod, 
-    useSwprContractMethod,
-    useGetWLEndTime
+    useTempSoldAmount
 } from '../../util/interactNew';
 import { 
     swprTokenAddress, 
-    busdTokenAddress, 
-    usdtTokenAddress,
+    busdTokenAddress,
     whitelistOfTiers,
-    whitelistOfTiersLength,
     saleStartTime,
     saleEndTime,
     preSaleAmount,

@@ -1,9 +1,9 @@
-import React, { Component, useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 
-import { BiPlus, FiPlus, BsPeople, BiMoney, BiKey, AiOutlineSchedule } from 'react-icons/all';
+import { BiMoney } from 'react-icons/all';
 import { Container, Row, Col, Table, Tabs, Tab } from 'react-bootstrap';
 import member_1 from '../../assets/img/team_member_1.jpg';
-import { useEthers, useTokenBalance } from "@usedapp/core";
+import { useEthers } from "@usedapp/core";
 import { Toast } from 'react-bootstrap';
 import Spinner from 'react-bootstrap/Spinner';
 
@@ -12,7 +12,6 @@ import {
     useVestingContractMethod, 
     useBalanceOfVesting,
     useGetUserSchedulePlain,
-    useGetParticipants,
     useGetTreasuryWallet,
     useSwprContractMethod
 } from '../../util/interactAdvisory';

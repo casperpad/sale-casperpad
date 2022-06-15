@@ -5,16 +5,13 @@ import Spinner from 'react-bootstrap/Spinner';
 import { Toast, Form } from 'react-bootstrap';
 
 import { 
-    swprTokenAddress, 
     vestingContractAddress, 
     busdTokenAddress, 
-    usdtTokenAddress, 
-    whitelistOfTiers 
+    usdtTokenAddress 
 } from '../../contract_info/vestingDataSeed';
 import {whitelist} from '../../contract_info/whitelistSeed';
 import { 
     useGetTierOfAccount,
-    useSwprContractMethod,
     useVestingContractMethod,
     useUsdtContractMethod,
     useBusdContractMethod

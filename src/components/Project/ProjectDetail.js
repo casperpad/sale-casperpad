@@ -13,7 +13,6 @@ import {
     useVestingContractMethod, 
     useBalanceOfVesting,
     useGetUserSchedulePlain,
-    useGetTreasuryWallet,
     useSwprContractMethod
 } from '../../util/interact';
 import { 

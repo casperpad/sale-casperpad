@@ -14,16 +14,12 @@ import {
     useGetUserSchedulePlain,
     useGetParticipants,
     useBalanceOfVesting,
-    useGetTierOfAccount,
-    useVestingContractMethod, 
-    useSwprContractMethod
+    useGetTierOfAccount
 } from '../../util/interactSkyAdvisor';
 import { 
     swprTokenAddress, 
-    busdTokenAddress, 
-    usdtTokenAddress,
+    busdTokenAddress,
     whitelistOfTiers,
-    whitelistOfTiersLength,
     saleStartTime,
     saleEndTime,
     preSaleAmount 

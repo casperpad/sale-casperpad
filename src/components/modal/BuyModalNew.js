@@ -1,20 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useEthers, useTokenBalance } from "@usedapp/core";
+import { useEthers } from "@usedapp/core";
 import Modal from 'react-bootstrap/Modal';
 import Spinner from 'react-bootstrap/Spinner';
 import { Toast, Form } from 'react-bootstrap';
 
 import { 
-    swprTokenAddress, 
     vestingContractAddress, 
     busdTokenAddress, 
-    usdtTokenAddress, 
-    whitelistOfTiers
+    usdtTokenAddress
 } from '../../contract_info/vestingDataNew';
 import {whitelistNew} from '../../contract_info/whitelistNew';
 import { 
     useGetTierOfAccount,
-    useSwprContractMethod,
     useVestingContractMethod,
     useUsdtContractMethod,
     useBusdContractMethod,

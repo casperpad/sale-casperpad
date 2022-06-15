@@ -10,8 +10,7 @@ import {
     useGetParticipants,
     useTempSoldAmount
 } from '../../util/interactSkypublic';
-import { 
-    whitelistOfTiers,
+import {
     preSaleAmount
 } from '../../contract_info/vestingDataSkypublic';
 

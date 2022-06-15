@@ -14,18 +14,13 @@ import {
     useGetUserSchedulePlain,
     useGetParticipants,
     useBalanceOfVesting,
-    useGetTierOfAccount,
-    useVestingContractMethod, 
-    useSwprContractMethod
+    useGetTierOfAccount
 } from '../../util/interactAdvisory';
 import { 
     swprTokenAddress, 
-    busdTokenAddress, 
-    usdtTokenAddress,
+    busdTokenAddress,
     whitelistOfTiers,
-    whitelistOfTiersLength,
     saleStartTime,
-    saleEndTime,
     preSaleAmount 
 } from '../../contract_info/vestingDataAdvisory';
 const { toChecksumAddress } = require('ethereum-checksum-address');

@@ -8,8 +8,7 @@ import {
     useSoldAmount,
     useGetParticipants
 } from '../../util/interactSkyAdvisor';
-import { 
-    whitelistOfTiers,
+import {
     preSaleAmount
 } from '../../contract_info/vestingDataSkyAdvisor';
 

@@ -17,7 +17,6 @@ import {
   useTempSoldAmount,
 } from "../../util/interactNew";
 import {
-  whitelistOfTiers,
   preSaleAmount,
 } from "../../contract_info/vestingDataNew";
 
