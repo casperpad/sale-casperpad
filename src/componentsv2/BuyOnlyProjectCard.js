@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   SiWebpack,
   AiFillTwitterCircle,
@@ -11,13 +11,12 @@ import { ProgressBar } from "react-bootstrap";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 
-export default function BuyOnlyProjectCard({ project }) {
+export default function BuyOnlyProjectCard({ project, status }) {
   const [loading, setLoading] = useState(true);
   const [totalPresaleAmount, setTotalPresaleAmount] = useState(0);
   const [soldAmount, setSoldAmount] = useState(0);
   const [participants, setParticipants] = useState(0);
-  const [status, setStatus] = useState();
-
+  const naviagte = useNavigate();
   useEffect(() => {}, []);
 
   const progressValue = useMemo(() => {
@@ -25,29 +24,19 @@ export default function BuyOnlyProjectCard({ project }) {
   }, [totalPresaleAmount, soldAmount]);
 
   return (
-    <Link
+    <button
       className="custom-card cursor-pointer"
-      to={`/project/binance/${project.contractAddress}`}
+      onClick={() => naviagte(`/project/binance/${project.address}`)}
     >
       <SkeletonTheme baseColor="#ffffff10" highlightColor="#ffffff20">
         <div className="custom-card-header">
           <div className="tokenLogo">
-            {loading ? (
-              <Skeleton width={100} height={100} />
-            ) : (
-              <img src={project.links.logo} alt="project profile" />
-            )}
+            <img src={project.links.logo} alt="project profile" />
           </div>
         </div>
         <div className="custom-card-title">
-          <div>
-            {loading ? (
-              <Skeleton height={17} />
-            ) : (
-              <strong>{project.name}</strong>
-            )}
-          </div>
-          <div className="currency-badge">
+          <strong>{project.name}</strong>
+          <div className="currency-badge flex flex-row gap-2">
             <span
               className="status"
               style={{ backgroundColor: "rgb(255 0 0 / 25%)", color: "red" }}
@@ -57,12 +46,13 @@ export default function BuyOnlyProjectCard({ project }) {
               />
               {status}
             </span>
+            {project.payToken.map((token) => (
+              <span className="status">{token.symbol}</span>
+            ))}
           </div>
         </div>
         <hr className="card-hr" />
-        <div className="custom-card-body">
-          {loading ? <Skeleton height={17} count={4} /> : project.description}
-        </div>
+        <div className="custom-card-body">{project.description}</div>
         <div className="custom-card-footer">
           <div className="information">
             <div>
@@ -78,7 +68,7 @@ export default function BuyOnlyProjectCard({ project }) {
             <div>
               Access
               <br />
-              <span>{project.access}</span>
+              <span>Public</span>
             </div>
           </div>
           <div className="custom-progress-bar">
@@ -96,14 +86,18 @@ export default function BuyOnlyProjectCard({ project }) {
               </span>
             </div>
             <ProgressBar now={progressValue} variant="pro" />
-            <div className="progress-title">
-              <span style={{ color: "white", fontWeight: "bold" }}>
-                {progressValue}%
-              </span>
-              <span style={{ color: "white", fontWeight: "bold" }}>
-                {soldAmount + "/" + totalPresaleAmount}
-              </span>
-            </div>
+            {loading ? (
+              <Skeleton className="mb-2" />
+            ) : (
+              <div className="progress-title">
+                <span style={{ color: "white", fontWeight: "bold" }}>
+                  {progressValue}%
+                </span>
+                <span style={{ color: "white", fontWeight: "bold" }}>
+                  {soldAmount + "/" + totalPresaleAmount}
+                </span>
+              </div>
+            )}
           </div>
         </div>
         <div className="custom-card-title">
@@ -123,6 +117,6 @@ export default function BuyOnlyProjectCard({ project }) {
           </div>
         </div>
       </SkeletonTheme>
-    </Link>
+    </button>
   );
 }

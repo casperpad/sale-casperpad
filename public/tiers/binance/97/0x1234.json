@@ -11,6 +11,16 @@
       "capacity": "100000",
       "price": 0.5
     },
+    "payToken": [
+      {
+        "address": "0x64544969ed7EBf5f083679233325356EbE738930",
+        "symbol": "USDC"
+      },
+      {
+        "address": "0xeD24FC36d5Ee211Ea25A80239Fb8C4Cfd80f12Ee",
+        "symbol": "BUSD"
+      }
+    ],
     "links": {
       "logo": "https://assets.coingecko.com/coins/images/24260/small/output-onlinepngtools.png?1647170874",
       "webpack": "https://",

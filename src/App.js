@@ -1,14 +1,15 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import { Route, BrowserRouter } from "react-router-dom";
+import { Route, BrowserRouter, Routes } from "react-router-dom";
 import { useEffect } from "react";
 import { useEthers } from "@usedapp/core";
 import { Signer } from "casper-js-sdk";
 
-import Home from "./pages/Home";
 import Projects from "./pages/Projects";
-import Staking from "./pages/Staking";
 import Error from "./pages/Error";
-import Project from "./pages/Project";
+import Project from "./pages/project";
+
+import Header from "./components/Header";
+import Footer from "./components/Footer";
+import Background from "./components/Background";
 
 import useNetworkStatus from "./store/useNetworkStatus";
 
@@ -21,6 +22,7 @@ function App() {
   useEffect(() => {
     if (chainId !== 56 && chainId !== 97) return;
     setBinanceAddress(account);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [account, chainId]);
 
   useEffect(() => {
@@ -48,28 +50,20 @@ function App() {
       });
       setCasperAddress(address);
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
-    <>
-      <BrowserRouter>
-        <Route exact path="/home">
-          <Home />
-        </Route>
-        <Route exact path="/">
-          <Projects />
-        </Route>
-        <Route path="/project/:network/:address">
-          <Project />
-        </Route>
-        <Route exact path="/staking/">
-          <Staking />
-        </Route>
-        <Route exact path="/error/">
-          <Error />
-        </Route>
-      </BrowserRouter>
-    </>
+    <BrowserRouter>
+      <Header />
+      <Background />
+      <Routes>
+        <Route exact path="/" element={<Projects />} />
+        <Route path="/project/*" element={<Project />} />
+        <Route exact path="/*" element={<Error />} />
+      </Routes>
+      <Footer />
+    </BrowserRouter>
   );
 }
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 
@@ -12,17 +12,15 @@ import {
 } from "react-icons/all";
 import { ProgressBar } from "react-bootstrap";
 
-import PropTypes from "prop-types";
+import { initClient } from "../xWeb3";
 
-import { initClient } from "../../xWeb3";
-
-export default function CustomCardCASPER({ project, status }) {
+export default function CasperCard({ project, status }) {
   const [totalPresaleAmount, setTotalPresaleAmount] = useState(0);
   const [soldAmount, setSoldAmount] = useState(0);
   const [progressValue, setProgressValue] = useState(0);
   const [participants, setParticipants] = useState(0);
   const [info, setInfo] = useState("");
-
+  const navigate = useNavigate();
   useEffect(() => {
     async function fetchData() {
       try {
@@ -52,12 +50,13 @@ export default function CustomCardCASPER({ project, status }) {
     }
 
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
-    <Link
+    <button
       className="custom-card cursor-pointer"
-      to={!info ? "" : "/project/casper/" + project.contractAddress}
+      onClick={() => navigate(`/project/casper/${project.contractAddress}`)}
     >
       <SkeletonTheme baseColor="#ffffff10" highlightColor="#ffffff20">
         <div className="custom-card-header">
@@ -169,10 +168,6 @@ export default function CustomCardCASPER({ project, status }) {
           </a>
         </div>
       </div>
-    </Link>
+    </button>
   );
 }
-
-CustomCardCASPER.propTypes = {
-  project: PropTypes.object.isRequired,
-};

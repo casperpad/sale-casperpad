@@ -1,6 +1,5 @@
 import React from "react";
-
-import CustomCardCASPER from "./CustomCardCASPER";
+import CasperCard from "../../componentsv2/CasperCard";
 
 export default function ProjectsClosed({ casperProjects = [] }) {
   return (
@@ -11,7 +10,7 @@ export default function ProjectsClosed({ casperProjects = [] }) {
       <section className="projects">
         {casperProjects.map((project, index) => {
           return (
-            <CustomCardCASPER
+            <CasperCard
               key={`casperclosed_${index}`}
               project={project}
               status={"Closed"}

@@ -1,44 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-
-import Header from "../components/Header";
-import Footer from "../components/Footer";
-import Background from "../components/Background";
-import TokenDetail from "../components/Project/TokenDetail";
-import ProjectDetail from "../components/Project/ProjectDetail";
-import TokenDetailNew from "../components/Project/TokenDetailNew";
-import ProjectDetailNew from "../components/Project/ProjectDetailNew";
-import TokenDetailSeed from "../components/Project/TokenDetailSeed";
-import ProjectDetailSeed from "../components/Project/ProjectDetailSeed";
-import TokenDetailAdvisory from "../components/Project/TokenDetailAdvisory";
-import ProjectDetailAdvisory from "../components/Project/ProjectDetailAdvisory";
-
-import TokenDetailSkyPrivate from "../components/Project/TokenDetailSkyPrivate";
-import ProjectDetailSkyPrivate from "../components/Project/ProjectDetailSkyPrivate";
-
-import TokenDetailSkyAdvisor from "../components/Project/TokenDetailSkyAdvisor";
-import ProjectDetailSkyAdvisor from "../components/Project/ProjectDetailSkyAdvisor";
-
-import TokenDetailSkypublic from "../components/Project/TokenDetailSkypublic";
-import ProjectDetailSkypublic from "../components/Project/ProjectDetailSkypublic";
-
-import TokenDetailCASPER from "../components/Project/TokenDetailCASPER";
-import ProjectDetailCASPER from "../components/Project/ProjectDetailCASPER";
-
-import Loading from "../components/Project/Loading";
-
-import { utils } from "casper-js-client-helper";
-
-import { initClient, initErc20Client, getAccountHashString } from "../xWeb3";
-import useNetworkStatus from "../store/useNetworkStatus";
 import { CLPublicKey } from "casper-js-sdk";
 import { MerkleTree } from "merkletreejs";
 import keccak256 from "keccak256";
+import { utils } from "casper-js-client-helper";
 
-export default function Projects() {
-  const option = useParams().address;
-  const network = useParams().network;
+import Loading from "../../components/Project/Loading";
+import TokenDetailCASPER from "../../components/Project/TokenDetailCASPER";
+import ProjectDetailCASPER from "../../components/Project/ProjectDetailCASPER";
 
+import { initClient, initErc20Client, getAccountHashString } from "../../xWeb3";
+import useNetworkStatus from "../../store/useNetworkStatus";
+
+export default function Casper() {
+  const contractHash = useParams().address;
   const [info, setInfo] = useState(undefined);
   const [merkleRoot, setMerkleRoot] = useState("");
   const [openTime, setOpenTime] = useState(0);
@@ -93,7 +68,7 @@ export default function Projects() {
     setLoading(true);
     setLoaded(false);
     try {
-      const casperpadClient = await initClient(option);
+      const casperpadClient = await initClient(contractHash);
 
       const response = await Promise.all([
         casperpadClient.queryContract("info"),
@@ -160,7 +135,7 @@ export default function Projects() {
 
     try {
       const [casperpadClient, erc20Client] = await Promise.all([
-        initClient(option),
+        initClient(contractHash),
         initErc20Client(tokenAddress).catch((err) => {
           return null;
         }),
@@ -205,116 +180,58 @@ export default function Projects() {
   }
 
   useEffect(() => {
-    if (network === "casper") {
-      async function fetchTierData() {
-        try {
-          const res = await fetch(`../../tiers/${option}.json`);
-          const data = await res.json();
-          setWhitelist(data.tiers);
-        } catch (err) {}
-      }
-
-      fetchTierData();
-      fetchData();
+    async function fetchTierData() {
+      try {
+        const res = await fetch(`../../tiers/${contractHash}.json`);
+        const data = await res.json();
+        setWhitelist(data.tiers);
+      } catch (err) {}
     }
+
+    fetchTierData();
+    fetchData();
   }, []);
 
   useEffect(() => {
     fetchCustomData(casperAddress);
   }, [casperAddress]);
 
+  if (loading || !loaded)
+    return <Loading loading={loading} loaded={loaded} fetchData={fetchData} />;
+
   return (
     <>
-      <Header />
-      <Background />
-      {(option === "swappery-private-sale" && (
-        <>
-          <TokenDetail />
-          <ProjectDetail />
-        </>
-      )) ||
-        (option === "swappery-public-sale" && (
-          <>
-            <TokenDetailNew />
-            <ProjectDetailNew />
-          </>
-        )) ||
-        (option === "swappery-seed-round" && (
-          <>
-            <TokenDetailSeed />
-            <ProjectDetailSeed />
-          </>
-        )) ||
-        (option === "swappery-advisory-round" && (
-          <>
-            <TokenDetailAdvisory />
-            <ProjectDetailAdvisory />
-          </>
-        )) ||
-        (option === "skybridger-private-sale" && (
-          <>
-            <TokenDetailSkyPrivate />
-            <ProjectDetailSkyPrivate />
-          </>
-        )) ||
-        (option === "skybridger-advisor-sale" && (
-          <>
-            <TokenDetailSkyAdvisor />
-            <ProjectDetailSkyAdvisor />
-          </>
-        )) ||
-        (option === "skybridger-public-sale" && (
-          <>
-            <TokenDetailSkypublic />
-            <ProjectDetailSkypublic />
-          </>
-        )) ||
-        (network === "casper" && (
-          <>
-            {((loading || !loaded) && (
-              <Loading
-                fetchData={fetchData}
-                loading={loading}
-                loaded={loaded}
-              />
-            )) || (
-              <>
-                <TokenDetailCASPER
-                  info={info}
-                  balance={balance}
-                  tier={tier}
-                  vestAmount={vestAmount}
-                  totalPresaleAmount={totalPresaleAmount}
-                  soldAmount={soldAmount}
-                  status={status}
-                  participants={participants}
-                  startTime={startTime}
-                  endTime={endTime}
-                  progressValue={progressValue}
-                  verified={verified}
-                  proof={proof}
-                  contractAddress={option}
-                  fetchData={fetchData}
-                />
-                <ProjectDetailCASPER
-                  info={info}
-                  vestAmount={vestAmount}
-                  isAdmin={isAdmin}
-                  openTime={openTime}
-                  totalPresaleAmount={totalPresaleAmount}
-                  soldAmount={soldAmount}
-                  participants={participants}
-                  schedules={schedules}
-                  scheduleClaimed={scheduleClaimed}
-                  verified={verified}
-                  fetchData={fetchData}
-                  contractAddress={option}
-                />
-              </>
-            )}
-          </>
-        ))}
-      <Footer />
+      <TokenDetailCASPER
+        info={info}
+        balance={balance}
+        tier={tier}
+        vestAmount={vestAmount}
+        totalPresaleAmount={totalPresaleAmount}
+        soldAmount={soldAmount}
+        status={status}
+        participants={participants}
+        startTime={startTime}
+        endTime={endTime}
+        progressValue={progressValue}
+        verified={verified}
+        proof={proof}
+        contractAddress={contractHash}
+        fetchData={fetchData}
+      />
+      <ProjectDetailCASPER
+        info={info}
+        vestAmount={vestAmount}
+        isAdmin={isAdmin}
+        openTime={openTime}
+        totalPresaleAmount={totalPresaleAmount}
+        soldAmount={soldAmount}
+        participants={participants}
+        schedules={schedules}
+        scheduleClaimed={scheduleClaimed}
+        verified={verified}
+        fetchData={fetchData}
+        contractAddress={contractHash}
+      />
     </>
   );
 }

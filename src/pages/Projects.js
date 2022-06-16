@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { utils } from "casper-js-client-helper";
 
-import Header from "../components/Header";
-import Footer from "../components/Footer";
-import Background from "../components/Background";
 import ProjectsOpen from "../components/Projects/ProjectsOpen";
 import ProjectsClosed from "../components/Projects/ProjectsClosed";
 import binanceProjects, { CHAIN_ID } from "../config/binance";
@@ -57,7 +54,6 @@ export default function Projects() {
       try {
         const fetchedProjectsInfo = await Promise.all(
           binanceProjects[CHAIN_ID].map(async (project) => {
-            console.log(CHAIN_ID, project.address);
             const res = await fetch(
               `tiers/binance/${CHAIN_ID}/${project.address}.json`
             );
@@ -65,24 +61,30 @@ export default function Projects() {
             return {
               address: project.address,
               isBuyOnly: project.isBuyOnly,
+              token: data.info.token,
+              payToken: data.info.payToken,
+              links: data.info.links,
+              name: data.info.name,
+              description: data.info.description,
               startTime: data.info.startTime,
               endTime: data.info.endTime,
             };
           })
         );
-        const comings = fetchedProjectsInfo.filter(
-          (project) => Date.now() <= project.startTime
-        );
-        const openeds = fetchedProjectsInfo.filter(
-          (project) =>
-            Date.now() > project.startTime && Date.now() < project.endTime
-        );
-        const closeds = fetchedProjectsInfo.filter(
-          (project) => Date.now() > project.endTime
-        );
-        setBinanceProjectsComing((prev) => [...prev, comings]);
-        setBinanceProjectsOpened((prev) => [...prev, openeds]);
-        setBinanceProjectsClosed((prev) => [...prev, closeds]);
+        setBinanceProjectsOpened((prev) => [...prev, ...fetchedProjectsInfo]);
+        // const comings = fetchedProjectsInfo.filter(
+        //   (project) => Date.now() <= project.startTime
+        // );
+        // const openeds = fetchedProjectsInfo.filter(
+        //   (project) =>
+        //     Date.now() > project.startTime && Date.now() < project.endTime
+        // );
+        // const closeds = fetchedProjectsInfo.filter(
+        //   (project) => Date.now() > project.endTime
+        // );
+        // setBinanceProjectsComing((prev) => [...prev, ...comings]);
+        // setBinanceProjectsOpened((prev) => [...prev, ...openeds]);
+        // setBinanceProjectsClosed((prev) => [...prev, ...closeds]);
       } catch (err) {
         console.error(err);
       }
@@ -93,15 +95,12 @@ export default function Projects() {
 
   return (
     <>
-      <Header />
-      <Background />
       <ProjectsOpen
         casperProjects={casperProjectsOpened}
         binanceProjects={binanceProjectsOpened}
       />
       {/* <ProjectsComing casperProjects={casperProjectsComing} /> */}
       <ProjectsClosed casperProjects={casperProjectsClosed} />
-      <Footer />
     </>
   );
 }
