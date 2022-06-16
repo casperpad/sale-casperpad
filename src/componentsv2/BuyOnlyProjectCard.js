@@ -35,7 +35,9 @@ export default function BuyOnlyProjectCard({ project, status }) {
           </div>
         </div>
         <div className="custom-card-title">
-          <strong>{project.name}</strong>
+          <div className="min-h-[30px]">
+            <strong>{project.name}</strong>
+          </div>
           <div className="currency-badge flex flex-row gap-2">
             <span
               className="status"
