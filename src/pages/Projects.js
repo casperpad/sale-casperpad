@@ -55,7 +55,7 @@ export default function Projects() {
         const fetchedProjectsInfo = await Promise.all(
           binanceProjects[CHAIN_ID].map(async (project) => {
             const res = await fetch(
-              `tiers/binance/${CHAIN_ID}/${project.address}.json`
+              `tiers/${CHAIN_ID}/${project.address}.json`
             );
             const data = await res.json();
             return {

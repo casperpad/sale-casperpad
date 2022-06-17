@@ -1,9 +1,8 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React from "react";
 
-import BuyOnlyProjectCard from "../../componentsv2/BuyOnlyProjectCard";
-import ProjectCard from "../../componentsv2/ProjectCard";
-import CasperCard from "../../componentsv2/CasperCard";
+import BuyOnlyProjectCard from "@components/BuyOnlyProjectCard";
+import ProjectCard from "@components/ProjectCard";
+import CasperCard from "@components/CasperCard";
 
 export default function ProjectsOpen({
   casperProjects = [],

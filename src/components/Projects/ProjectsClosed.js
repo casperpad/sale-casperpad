@@ -1,5 +1,5 @@
 import React from "react";
-import CasperCard from "../../componentsv2/CasperCard";
+import CasperCard from "@components/CasperCard";
 
 export default function ProjectsClosed({ casperProjects = [] }) {
   return (

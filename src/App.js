@@ -1,7 +1,8 @@
-import { Route, BrowserRouter, Routes } from "react-router-dom";
 import { useEffect } from "react";
-import { useEthers } from "@usedapp/core";
+import { Route, BrowserRouter, Routes } from "react-router-dom";
+import { useWeb3React } from "@web3-react/core";
 import { Signer } from "casper-js-sdk";
+import { ToastContainer } from "react-toastify";
 
 import Projects from "./pages/Projects";
 import Error from "./pages/Error";
@@ -12,20 +13,19 @@ import Footer from "./components/Footer";
 import Background from "./components/Background";
 
 import useNetworkStatus from "./store/useNetworkStatus";
+import { injected } from "./util/web3React";
 
 import "./App.css";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
-  const { setCasperAddress, setBinanceAddress } = useNetworkStatus();
-  const { chainId, account } = useEthers();
+  const { setCasperAddress } = useNetworkStatus();
+  const { library, chainId, account, activate, deactivate, active } =
+    useWeb3React();
 
   useEffect(() => {
-    if (chainId !== 56 && chainId !== 97) return;
-    setBinanceAddress(account);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [account, chainId]);
-
-  useEffect(() => {
+    const provider = window.localStorage.getItem("provider");
+    if (provider) activate(injected);
     window.addEventListener("signer:disconnected", () => {
       setCasperAddress("");
     });
@@ -63,6 +63,7 @@ function App() {
         <Route exact path="/*" element={<Error />} />
       </Routes>
       <Footer />
+      <ToastContainer />
     </BrowserRouter>
   );
 }

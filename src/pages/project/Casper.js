@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { CLPublicKey } from "casper-js-sdk";
 import { MerkleTree } from "merkletreejs";
@@ -121,7 +121,7 @@ export default function Casper() {
     setLoading(false);
   }
 
-  async function fetchCustomData() {
+  const fetchCustomData = useCallback(async () => {
     setIsAdmin(false);
     setTier(0);
     setBalance(-1);
@@ -177,12 +177,15 @@ export default function Casper() {
     } catch (err) {}
 
     setUserDataLoading(false);
-  }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [casperAddress]);
 
   useEffect(() => {
     async function fetchTierData() {
       try {
-        const res = await fetch(`../../tiers/${contractHash}.json`);
+        const res = await fetch(
+          `${window.location.origin}/tiers/${contractHash}.json`
+        );
         const data = await res.json();
         setWhitelist(data.tiers);
       } catch (err) {}
@@ -190,11 +193,12 @@ export default function Casper() {
 
     fetchTierData();
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     fetchCustomData(casperAddress);
-  }, [casperAddress]);
+  }, [casperAddress, fetchCustomData]);
 
   if (loading || !loaded)
     return <Loading loading={loading} loaded={loaded} fetchData={fetchData} />;

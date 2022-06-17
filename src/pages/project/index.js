@@ -2,7 +2,7 @@ import React from "react";
 import { Route, Routes } from "react-router-dom";
 
 import CasperProject from "./Casper";
-import BinanceProject from "./Binance";
+import BinanceProject from "./binance";
 
 export default function Project() {
   return (

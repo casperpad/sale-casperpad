@@ -1,19 +1,18 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import { Web3ReactProvider } from "@web3-react/core";
+import { getLibrary } from "./util/web3React";
 
-import "./index.css";
 import "./assets/css/bootstrap.min.css";
+import "./index.css";
 
 import App from "./App";
-
 import reportWebVitals from "./reportWebVitals";
-import { DAppProvider } from "@usedapp/core";
-import { CHAIN_ID } from "./config/binance";
 
 ReactDOM.render(
-  <DAppProvider config={{ supportedChains: CHAIN_ID }}>
+  <Web3ReactProvider getLibrary={getLibrary}>
     <App />
-  </DAppProvider>,
+  </Web3ReactProvider>,
   document.getElementById("root")
 );
 

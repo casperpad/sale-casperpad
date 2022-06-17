@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   SiWebpack,
@@ -10,14 +10,13 @@ import {
 import { ProgressBar } from "react-bootstrap";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
+import useBuyOnlyContract from "@hooks/binance/buyOnly";
 
 export default function BuyOnlyProjectCard({ project, status }) {
-  const [loading, setLoading] = useState(true);
   const [totalPresaleAmount, setTotalPresaleAmount] = useState(0);
   const [soldAmount, setSoldAmount] = useState(0);
-  const [participants, setParticipants] = useState(0);
   const naviagte = useNavigate();
-  useEffect(() => {}, []);
+  const { participants, loading } = useBuyOnlyContract(project.address);
 
   const progressValue = useMemo(() => {
     return (soldAmount / totalPresaleAmount) * 100;
@@ -49,7 +48,9 @@ export default function BuyOnlyProjectCard({ project, status }) {
               {status}
             </span>
             {project.payToken.map((token) => (
-              <span className="status">{token.symbol}</span>
+              <span key={token.address} className="status">
+                {token.symbol}
+              </span>
             ))}
           </div>
         </div>

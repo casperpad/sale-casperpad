@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState } from "react";
-import { useEthers } from "@usedapp/core";
+import { useWeb3React } from "@web3-react/core";
 import Modal from "react-bootstrap/Modal";
 import { Toast } from "react-bootstrap";
 import metamask from "../../assets/icons/metamask.svg";
@@ -8,23 +8,20 @@ import caspersigner from "../../assets/icons/caspersigner.svg";
 
 import useNetworkStatus from "../../store/useNetworkStatus";
 import { Signer } from "casper-js-sdk";
+import { injected } from "../../util/web3React";
 
 const MyModal = ({ isOpen, setIsOpen, onlyOneToast }) => {
-  const {
-    casperConnected,
-    binanceConnected,
-    casperAddress,
-    binanceAddress,
-    setCasperAddress,
-    setBinanceAddress,
-  } = useNetworkStatus();
+  const { casperConnected, casperAddress, setCasperAddress } =
+    useNetworkStatus();
 
   const [showToast, setShowToast] = useState(false);
-  const { activateBrowserWallet, deactivate } = useEthers();
+  const { account, activate, deactivate, active, chainId, library } =
+    useWeb3React();
+
   const handleClose = () => setIsOpen(false);
 
-  function handleConnectWalletMeta() {
-    activateBrowserWallet();
+  async function handleConnectWalletMeta() {
+    await activate(injected);
     handleClose();
   }
 
@@ -32,7 +29,6 @@ const MyModal = ({ isOpen, setIsOpen, onlyOneToast }) => {
 
   function handleDisconnectWalletMeta() {
     deactivate();
-    setBinanceAddress("");
     handleClose();
   }
 
@@ -69,7 +65,7 @@ const MyModal = ({ isOpen, setIsOpen, onlyOneToast }) => {
                 e.stopPropagation();
               }}
             >
-              {(binanceConnected && (
+              {(active && (
                 <>
                   <div
                     data-bs-dismiss="modal"
@@ -78,9 +74,7 @@ const MyModal = ({ isOpen, setIsOpen, onlyOneToast }) => {
                   >
                     <div className="text-white col-12 m-auto">
                       {" "}
-                      <span style={{ wordBreak: "break-all" }}>
-                        {binanceAddress}
-                      </span>
+                      <span style={{ wordBreak: "break-all" }}>{account}</span>
                     </div>
                   </div>
                   <div
@@ -89,7 +83,7 @@ const MyModal = ({ isOpen, setIsOpen, onlyOneToast }) => {
                     className="c-list border-b px-3 py-2 d-flex align-items-center cursor-pointer"
                   >
                     <a
-                      href={"https://bscscan.com/address/" + binanceAddress}
+                      href={"https://bscscan.com/address/" + account}
                       target="_blank"
                       className="text-white m-auto"
                       rel="noreferrer"
