@@ -20,12 +20,10 @@ import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   const { setCasperAddress } = useNetworkStatus();
-  const { library, chainId, account, activate, deactivate, active } =
-    useWeb3React();
+  const { activate } = useWeb3React();
 
   useEffect(() => {
-    const provider = window.localStorage.getItem("provider");
-    if (provider) activate(injected);
+    activate(injected);
     window.addEventListener("signer:disconnected", () => {
       setCasperAddress("");
     });

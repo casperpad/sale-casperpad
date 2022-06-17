@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { utils } from "casper-js-client-helper";
 
 import ProjectsOpen from "../components/Projects/ProjectsOpen";
+import ProjectsComing from "../components/Projects/ProjectsComing";
 import ProjectsClosed from "../components/Projects/ProjectsClosed";
 import binanceProjects, { CHAIN_ID } from "../config/binance";
 import { initFactoryClient } from "../xWeb3";
@@ -71,20 +72,19 @@ export default function Projects() {
             };
           })
         );
-        setBinanceProjectsOpened((prev) => [...prev, ...fetchedProjectsInfo]);
-        // const comings = fetchedProjectsInfo.filter(
-        //   (project) => Date.now() <= project.startTime
-        // );
-        // const openeds = fetchedProjectsInfo.filter(
-        //   (project) =>
-        //     Date.now() > project.startTime && Date.now() < project.endTime
-        // );
-        // const closeds = fetchedProjectsInfo.filter(
-        //   (project) => Date.now() > project.endTime
-        // );
-        // setBinanceProjectsComing((prev) => [...prev, ...comings]);
-        // setBinanceProjectsOpened((prev) => [...prev, ...openeds]);
-        // setBinanceProjectsClosed((prev) => [...prev, ...closeds]);
+        const comings = fetchedProjectsInfo.filter(
+          (project) => Date.now() <= project.startTime
+        );
+        const openeds = fetchedProjectsInfo.filter(
+          (project) =>
+            Date.now() > project.startTime && Date.now() < project.endTime
+        );
+        const closeds = fetchedProjectsInfo.filter(
+          (project) => Date.now() > project.endTime
+        );
+        setBinanceProjectsComing((prev) => [...prev, ...comings]);
+        setBinanceProjectsOpened((prev) => [...prev, ...openeds]);
+        setBinanceProjectsClosed((prev) => [...prev, ...closeds]);
       } catch (err) {
         console.error(err);
       }
@@ -99,8 +99,14 @@ export default function Projects() {
         casperProjects={casperProjectsOpened}
         binanceProjects={binanceProjectsOpened}
       />
-      {/* <ProjectsComing casperProjects={casperProjectsComing} /> */}
-      <ProjectsClosed casperProjects={casperProjectsClosed} />
+      <ProjectsComing
+        casperProjects={casperProjectsComing}
+        binanceProjects={binanceProjectsComing}
+      />
+      <ProjectsClosed
+        casperProjects={casperProjectsClosed}
+        binanceProjects={binanceProjectsClosed}
+      />
     </>
   );
 }

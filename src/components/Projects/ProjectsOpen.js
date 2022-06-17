@@ -15,28 +15,26 @@ export default function ProjectsOpen({
       </h1>
       <section className="projects mx-auto">
         {binanceProjects.map((project) => {
+          if (project.isBuyOnly)
+            return (
+              <BuyOnlyProjectCard
+                key={project.address}
+                project={project}
+                status={"Opened"}
+              />
+            );
           return (
-            <>
-              {project.isBuyOnly ? (
-                <BuyOnlyProjectCard
-                  key={project.address}
-                  project={project}
-                  status={"Opened"}
-                />
-              ) : (
-                <ProjectCard
-                  key={project.address}
-                  project={project}
-                  status={"Opened"}
-                />
-              )}
-            </>
+            <ProjectCard
+              key={project.address}
+              project={project}
+              status={"Opened"}
+            />
           );
         })}
-        {casperProjects.map((project, index) => {
+        {casperProjects.map((project) => {
           return (
             <CasperCard
-              key={`casperopened_${index}`}
+              key={project.contractAddress}
               project={project}
               status={"Opened"}
             />

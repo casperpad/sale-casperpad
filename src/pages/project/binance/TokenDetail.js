@@ -141,179 +141,186 @@ export default function TokenDetailNew(props) {
     return true;
   }, []);
 
-  if (loading || contractDataLoading || !loaded || !contractDataLoaded)
-    return (
-      <Loading
-        loading={loading}
-        loaded={loaded || contractDataLoaded}
-        fetchData={fetchData}
-      />
-    );
-
   return (
     <>
-      <Container className="mb-5">
-        <Row>
-          <Col sm={5}>
-            <section className="mt-auto">
-              <div className="toekn-detail-header d-flex mt-5">
-                <div className="tokenLogo mr-5">
-                  <img src={info.links.logo} alt="project profile"></img>
-                </div>
-                <div className="custom-card-title">
-                  <h2 className="text-white mb-auto  tokenLogoTitle">
-                    {info.name}
-                  </h2>
-                </div>
-              </div>
-              <div className="custom-card-header">
-                <div>
-                  <div className="grid-box">
-                    <div
-                      className="text-white my-0 ml-3"
-                      style={{ fontSize: "1.5rem" }}
-                    >
-                      {info.token.symbol}
+      {loading || contractDataLoading || !loaded || !contractDataLoaded ? (
+        <>
+          <Loading
+            loading={loading}
+            loaded={loaded || contractDataLoaded}
+            fetchData={fetchData}
+          />
+        </>
+      ) : (
+        <>
+          <Container className="mb-5">
+            <Row>
+              <Col sm={5}>
+                <section className="mt-auto">
+                  <div className="toekn-detail-header d-flex mt-5">
+                    <div className="tokenLogo mr-5">
+                      <img src={info.links.logo} alt="project profile"></img>
+                    </div>
+                    <div className="custom-card-title">
+                      <h2 className="text-white mb-auto  tokenLogoTitle">
+                        {info.name}
+                      </h2>
                     </div>
                   </div>
-                  <div className="buyBtnContainer d-flex">
-                    <span
-                      className="status"
-                      style={{
-                        backgroundColor: "rgb(255 0 0 / 25%)",
-                        color: "red",
-                      }}
-                    >
-                      <BsCircleFill
-                        style={{ fontSize: ".6rem", verticalAlign: "middle" }}
-                      />
-                      {status}
-                    </span>{" "}
-                    &nbsp;
-                    <span className="status">BUSD</span> &nbsp;
-                    <span className="status">USDC</span>
-                  </div>
-                  <hr />
-                  <div className="text-white">
-                    <div className="mb-4">{info.description}</div>
-                    {!active && (
-                      <button
-                        className="btn btn-wallet wallet-connected"
-                        onClick={() => setIsOpen(true)}
-                      >
-                        Connect Wallet
-                      </button>
-                    )}
+                  <div className="custom-card-header">
+                    <div>
+                      <div className="grid-box">
+                        <div
+                          className="text-white my-0 ml-3"
+                          style={{ fontSize: "1.5rem" }}
+                        >
+                          {info.token.symbol}
+                        </div>
+                      </div>
+                      <div className="buyBtnContainer d-flex">
+                        <span
+                          className="status"
+                          style={{
+                            backgroundColor: "rgb(255 0 0 / 25%)",
+                            color: "red",
+                          }}
+                        >
+                          <BsCircleFill
+                            style={{
+                              fontSize: ".6rem",
+                              verticalAlign: "middle",
+                            }}
+                          />
+                          {status}
+                        </span>{" "}
+                        &nbsp;
+                        <span className="status">BUSD</span> &nbsp;
+                        <span className="status">USDC</span>
+                      </div>
+                      <hr />
+                      <div className="text-white">
+                        <div className="mb-4">{info.description}</div>
+                        {!active && (
+                          <button
+                            className="btn btn-wallet wallet-connected"
+                            onClick={() => setIsOpen(true)}
+                          >
+                            Connect Wallet
+                          </button>
+                        )}
 
-                    {isSaleTime ? (
-                      whitlistied ? (
-                        <button
-                          className="btn btn-wallet wallet-connected mr-4 mb-2"
-                          onClick={() => setIsOpenBuy(true)}
-                        >
-                          <BiMoney /> Buy {info.token.symbol} (WhiteList)
-                        </button>
-                      ) : null
-                    ) : (
-                      accountTier > 0 &&
-                      active &&
-                      info.startTime > 0 &&
-                      currentTime <= info.endTime &&
-                      currentTime < info.startTime && (
-                        <button
-                          className="btn btn-wallet wallet-connected mx-auto mb-2"
-                          disabled
-                        >
-                          {" "}
-                          <BsClockHistory />
-                          {/* {tmp_day_wl} Days {tmp_hour_wl}{" "}
+                        {isSaleTime ? (
+                          whitlistied ? (
+                            <button
+                              className="btn btn-wallet wallet-connected mr-4 mb-2"
+                              onClick={() => setIsOpenBuy(true)}
+                            >
+                              <BiMoney /> Buy {info.token.symbol} (WhiteList)
+                            </button>
+                          ) : null
+                        ) : (
+                          accountTier > 0 &&
+                          active &&
+                          info.startTime > 0 &&
+                          currentTime <= info.endTime &&
+                          currentTime < info.startTime && (
+                            <button
+                              className="btn btn-wallet wallet-connected mx-auto mb-2"
+                              disabled
+                            >
+                              <BsClockHistory />
+                              {/* {tmp_day_wl} Days {tmp_hour_wl}{" "}
                             Hours {tmp_min_wl} Mins {tmp_sec_wl} Secs */}
-                        </button>
-                      )
-                    )}
-                  </div>
-                  <div className="mt-3">
-                    <div className="social-links">
-                      <a href={info.links.webpack}>
-                        <SiWebpack className="social-link" />
-                      </a>
-                      <a href={info.links.twitter}>
-                        <AiFillTwitterCircle className="social-link" />
-                      </a>
-                      <a href={info.links.outline}>
-                        <AiOutlineMedium className="social-link" />
-                      </a>
-                      <a href={info.links.telegram}>
-                        <FaTelegramPlane className="social-link" />
-                      </a>
+                            </button>
+                          )
+                        )}
+                      </div>
+                      <div className="mt-3">
+                        <div className="social-links">
+                          <a href={info.links.webpack}>
+                            <SiWebpack className="social-link" />
+                          </a>
+                          <a href={info.links.twitter}>
+                            <AiFillTwitterCircle className="social-link" />
+                          </a>
+                          <a href={info.links.outline}>
+                            <AiOutlineMedium className="social-link" />
+                          </a>
+                          <a href={info.links.telegram}>
+                            <FaTelegramPlane className="social-link" />
+                          </a>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </div>
-            </section>
-          </Col>
-          <Col sm={7}>
-            <SkeletonTheme baseColor="#ffffff10" highlightColor="#ffffff20">
-              <section className="custom-card-detail text-white">
-                <div className="grid-box">
-                  <div> Your balance </div>
-                  <div> Allocation </div>
-                </div>
-                <div className="grid-box text-white">
-                  <div style={{ paddingRight: "3rem" }}>-</div>
-                  {loading ? (
-                    <Skeleton />
-                  ) : accountAllocation ? (
-                    <div>{accountAllocation + " USD"}</div>
-                  ) : (
-                    <div> This wallet is not whitelisted </div>
-                  )}
-                </div>
-                <hr className="bg-gray-100" />
-                <div className="grid-box">
-                  <div className="text-white"> {status} </div>
-                </div>
-                <div className="custom-card-footer detail-bar">
-                  <div className="custom-progress-bar">
-                    <div className="progress-title">
-                      <span>Progress</span>
-                      <span>
-                        Participants{" "}
-                        <span style={{ color: "white", fontWeight: "bold" }}>
-                          {participants}
-                        </span>
-                      </span>
+                </section>
+              </Col>
+              <Col sm={7}>
+                <SkeletonTheme baseColor="#ffffff10" highlightColor="#ffffff20">
+                  <section className="custom-card-detail text-white">
+                    <div className="grid-box">
+                      <div> Your balance </div>
+                      <div> Allocation </div>
                     </div>
-                    <ProgressBar now={progressValue} variant="pro" />
-                    <div className="progress-title">
-                      <span style={{ color: "white", fontWeight: "bold" }}>
-                        {progressValue.toFixed(5)}%
-                      </span>
-                      <span style={{ color: "white", fontWeight: "bold" }}>
-                        {/* {soldAmount.toFixed(5) +
+                    <div className="grid-box text-white">
+                      <div style={{ paddingRight: "3rem" }}>-</div>
+                      {loading ? (
+                        <Skeleton />
+                      ) : accountAllocation ? (
+                        <div>{accountAllocation + " USD"}</div>
+                      ) : (
+                        <div> This wallet is not whitelisted </div>
+                      )}
+                    </div>
+                    <hr className="bg-gray-100" />
+                    <div className="grid-box">
+                      <div className="text-white"> {status} </div>
+                    </div>
+                    <div className="custom-card-footer detail-bar">
+                      <div className="custom-progress-bar">
+                        <div className="progress-title">
+                          <span>Progress</span>
+                          <span>
+                            Participants{" "}
+                            <span
+                              style={{ color: "white", fontWeight: "bold" }}
+                            >
+                              {participants}
+                            </span>
+                          </span>
+                        </div>
+                        <ProgressBar now={progressValue} variant="pro" />
+                        <div className="progress-title">
+                          <span style={{ color: "white", fontWeight: "bold" }}>
+                            {progressValue.toFixed(5)}%
+                          </span>
+                          <span style={{ color: "white", fontWeight: "bold" }}>
+                            {/* {soldAmount.toFixed(5) +
                           "/" +
                           totalPresaleAmount.toFixed(5)} */}
-                      </span>
+                          </span>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </div>
-              </section>
-            </SkeletonTheme>
-          </Col>
-        </Row>
-      </Container>
-      <MyModal isOpen={isOpen} setIsOpen={setIsOpen} />
-      <EthereumBuyModal
-        isOpen={isOpenBuy}
-        payToken={info.payToken}
-        handleClose={() => setIsOpenBuy(false)}
-        accountAllocation={accountAllocation}
-        tokenPrice={info.token.price}
-        tokenSymbol={info.token.symbol}
-        proof={getMerkleProof(investors, tier, account)}
-        contractAddress={address}
-        handleAddVest={handleAddVest}
-      />
+                  </section>
+                </SkeletonTheme>
+              </Col>
+            </Row>
+          </Container>
+          <MyModal isOpen={isOpen} setIsOpen={setIsOpen} />
+          <EthereumBuyModal
+            isOpen={isOpenBuy}
+            payToken={info.payToken}
+            handleClose={() => setIsOpenBuy(false)}
+            accountAllocation={accountAllocation}
+            tokenPrice={info.token.price}
+            tokenSymbol={info.token.symbol}
+            proof={getMerkleProof(investors, tier, account)}
+            contractAddress={address}
+            handleAddVest={handleAddVest}
+          />
+        </>
+      )}
     </>
   );
 }
