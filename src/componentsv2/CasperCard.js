@@ -56,7 +56,10 @@ export default function CasperCard({ project, status }) {
   return (
     <button
       className="custom-card cursor-pointer"
-      onClick={() => navigate(`/project/casper/${project.contractAddress}`)}
+      onClick={() => {
+        if (!info) return;
+        navigate(`/project/casper/${project.contractAddress}`);
+      }}
     >
       <SkeletonTheme baseColor="#ffffff10" highlightColor="#ffffff20">
         <div className="custom-card-header">
