@@ -171,23 +171,13 @@ const EthereumBuyModal = (props) => {
                       min={0}
                       max={parseFloat(accountAllocation)}
                       value={payTokenAmount}
-                      onChange={(e) => setPayTokenAmount(e.target.value)}
-                    />
-                  </div>
-                </div>
-                <div
-                  data-bs-dismiss="modal"
-                  className="c-list border-b px-3 py-2 d-flex align-items-center"
-                >
-                  <div className="text-white m-auto"> {tokenSymbol}</div>
-                  <div>
-                    <input
-                      className="form-control"
-                      type="number"
-                      step={0.001}
-                      min={0}
-                      value={buyTokenAmount}
-                      onChange={(e) => setBuyTokenAmount(e.target.value)}
+                      onChange={(e) => {
+                        if (e.target.value.length > 10) return;
+                        const value = parseFloat(e.target.value);
+                        const allocation = parseFloat(accountAllocation);
+                        if (value > allocation || value < 0) return;
+                        setPayTokenAmount(e.target.value);
+                      }}
                     />
                   </div>
                 </div>

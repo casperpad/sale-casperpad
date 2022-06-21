@@ -5,7 +5,7 @@ const Loading = (props) => {
   const { loading, loaded, fetchData } = props;
 
   return (
-    <>
+    <div className="load-data">
       <div className={"load-status text-white " + (loading ? "" : "hide")}>
         <Spinner animation="border" className="claim-spinner" />
       </div>
@@ -21,7 +21,7 @@ const Loading = (props) => {
           <h1>Try again!</h1>
         </button>
       </div>
-    </>
+    </div>
   );
 };
 
