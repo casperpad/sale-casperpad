@@ -54,7 +54,7 @@ export default function Casper() {
       (investor) => `${investor.accountHash}_${tiers[investor.tier]}`
     );
     const leaves = elements.map(keccak256);
-    const tree = new MerkleTree(leaves, keccak256);
+    const tree = new MerkleTree(leaves, keccak256, { sort: true });
 
     const rootTocheck = root ? root : tree.getRoot();
 
