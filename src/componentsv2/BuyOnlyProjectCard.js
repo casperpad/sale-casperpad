@@ -45,7 +45,13 @@ export default function BuyOnlyProjectCard({ project, status }) {
           <div className="currency-badge flex flex-row gap-2">
             <span
               className="status"
-              style={{ backgroundColor: "rgb(255 0 0 / 25%)", color: "red" }}
+              style={{
+                backgroundColor:
+                  status === "Opened"
+                    ? "rgb(0 255 0 / 10%)"
+                    : "rgb(255 0 0 / 25%)",
+                color: status === "Opened" ? "green" : "red",
+              }}
             >
               <BsCircleFill
                 style={{ fontSize: ".6rem", verticalAlign: "middle" }}

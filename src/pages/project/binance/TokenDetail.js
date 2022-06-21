@@ -112,13 +112,14 @@ export default function TokenDetailNew(props) {
     return investors.find((investor) => investor.address === account)?.tier;
   }, [account, investors]);
 
-  const whitlistied = useMemo(() => {
+  const whitelisted = useMemo(() => {
     if (accountTier === undefined || merkleRoot === undefined) return false;
     const leaves = generateLeaves(investors, tier);
     const merkleTree = new MerkleTree(leaves, keccak256, { sort: true });
     const proof = getMerkleProof(investors, tier, account);
     const leaf = generateLeaf(account, tier[accountTier]);
     const verified = merkleTree.verify(proof, leaf, merkleRoot);
+    console.log(verified);
     return verified;
   }, [accountTier, investors, tier, account, merkleRoot]);
 
@@ -180,8 +181,11 @@ export default function TokenDetailNew(props) {
                         <span
                           className="status"
                           style={{
-                            backgroundColor: "rgb(255 0 0 / 25%)",
-                            color: "red",
+                            backgroundColor:
+                              status === "Opened"
+                                ? "rgb(0 255 0 / 10%)"
+                                : "rgb(255 0 0 / 25%)",
+                            color: status === "Opened" ? "green" : "red",
                           }}
                         >
                           <BsCircleFill
@@ -209,7 +213,7 @@ export default function TokenDetailNew(props) {
                         )}
 
                         {isSaleTime ? (
-                          whitlistied ? (
+                          whitelisted ? (
                             <button
                               className="btn btn-wallet wallet-connected mr-4 mb-2"
                               onClick={() => setIsOpenBuy(true)}

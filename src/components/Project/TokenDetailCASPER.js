@@ -101,8 +101,11 @@ export default function TokenDetailNew(props) {
                     <span
                       className="status"
                       style={{
-                        backgroundColor: "rgb(255 0 0 / 25%)",
-                        color: "red",
+                        backgroundColor:
+                          status === "Opened"
+                            ? "rgb(0 255 0 / 10%)"
+                            : "rgb(255 0 0 / 25%)",
+                        color: status === "Opened" ? "green" : "red",
                       }}
                     >
                       <BsCircleFill
