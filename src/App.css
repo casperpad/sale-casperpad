@@ -797,6 +797,7 @@ button:focus {
   height: 40%;
 }
 .custom-card-header img {
+  border-radius: 12px;
   vertical-align: middle;
   border-style: none;
   position: absolute;
@@ -1317,6 +1318,7 @@ h3 {
   height: 10%;
 }
 .toekn-detail-header img {
+  border-radius: 12px;
   vertical-align: middle;
   border-style: none;
   position: absolute;

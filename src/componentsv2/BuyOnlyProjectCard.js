@@ -31,7 +31,11 @@ export default function BuyOnlyProjectCard({ project, status }) {
       <SkeletonTheme baseColor="#ffffff10" highlightColor="#ffffff20">
         <div className="custom-card-header">
           <div className="tokenLogo">
-            <img src={project.links.logo} alt="project profile" />
+            <img
+              className="rounded-full"
+              src={project.links.logo}
+              alt="project profile"
+            />
           </div>
         </div>
         <div className="custom-card-title">

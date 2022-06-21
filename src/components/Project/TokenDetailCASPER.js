@@ -91,8 +91,8 @@ export default function TokenDetailNew(props) {
                 <div>
                   <div className="grid-box">
                     <div
-                      className="text-white my-0 ml-3"
-                      style={{ fontSize: "1.5rem" }}
+                      className="text-white ml-3"
+                      style={{ fontSize: "1.5rem", marginTop: "1rem" }}
                     >
                       {info.token.symbol}
                     </div>
@@ -113,10 +113,9 @@ export default function TokenDetailNew(props) {
                         : status === "Opened"
                         ? " Opened"
                         : " Closed"}
-                    </span>{" "}
+                    </span>
                     &nbsp;
-                    <span className="status">BUSD</span> &nbsp;
-                    <span className="status">USDC</span>
+                    <span className="status">CSPR</span> &nbsp;
                   </div>
                   <hr />
                   <div className="text-white">
