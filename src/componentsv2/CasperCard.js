@@ -19,31 +19,27 @@ export default function CasperCard({ project, status }) {
   const [soldAmount, setSoldAmount] = useState(0);
   const [progressValue, setProgressValue] = useState(0);
   const [participants, setParticipants] = useState(0);
-  const [info, setInfo] = useState("");
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   useEffect(() => {
     async function fetchData() {
       try {
-        const casperpadClient = await initClient(project.contractAddress);
-
+        const casperpadClient = await initClient(project.contractHash);
         const response = await Promise.all([
-          casperpadClient.queryContract("info"),
           casperpadClient.queryContract("auction_token_capacity"),
           casperpadClient.queryContract("total_participants"),
           casperpadClient.queryContract("sold_amount"),
         ]);
 
-        const info = JSON.parse(response[0]);
-        setInfo(info);
+        setParticipants(response[1].toNumber());
 
-        setParticipants(response[2].toNumber());
+        const totalPresaleAmount = response[0] / 10 ** project.token.decimals;
+        setTotalPresaleAmount(response[0] / 10 ** project.token.decimals);
 
-        const totalPresaleAmount = response[1] / 10 ** info.token.decimals;
-        setTotalPresaleAmount(response[1] / 10 ** info.token.decimals);
-
-        const soldAmount = response[3] / 10 ** 9 / info.token.price;
-        setSoldAmount(response[3] / 10 ** 9 / info.token.price);
+        const soldAmount = response[2] / 10 ** 9 / project.token.price;
+        setSoldAmount(response[2] / 10 ** 9 / project.token.price);
         setProgressValue((soldAmount * 100) / totalPresaleAmount);
+        setLoading(false);
       } catch (err) {
         fetchData();
       }
@@ -57,24 +53,19 @@ export default function CasperCard({ project, status }) {
     <button
       className="custom-card cursor-pointer"
       onClick={() => {
-        if (!info) return;
-        navigate(`/project/casper/${project.contractAddress}`);
+        navigate(`/project/casper/${project.contractHash}`);
       }}
     >
       <div className="custom-card-type">CASPER</div>
       <SkeletonTheme baseColor="#ffffff10" highlightColor="#ffffff20">
         <div className="custom-card-header">
-          {!info ? (
-            <Skeleton width={100} height={100} />
-          ) : (
-            <div className="tokenLogo">
-              <img src={info && info.links.logo} alt="project profile" />
-            </div>
-          )}
+          <div className="tokenLogo">
+            <img src={project.links.logo} alt="project profile" />
+          </div>
         </div>
         <div className="custom-card-title">
           <div className="min-h-[30px]">
-            <strong>{info && info.name}</strong>
+            <strong>{project.name}</strong>
           </div>
           <div>
             <span
@@ -91,33 +82,24 @@ export default function CasperCard({ project, status }) {
                 : " Closed"}
             </span>{" "}
             &nbsp;
-            <span className="status">BUSD</span> &nbsp;
-            <span className="status">USDC</span>
+            <span className="status">CSPR</span> &nbsp;
           </div>
         </div>
         <hr className="card-hr" />
-        <div className="custom-card-body">
-          {!info ? <Skeleton height={17} count={4} /> : info.description}
-        </div>
+        <div className="custom-card-body">{project.description}</div>
         <div className="custom-card-footer">
           <div className="information">
             <div>
               Token Price
               <br />
-              <span>
-                {!info ? <Skeleton height={20} /> : info.token.price + " cspr"}
-              </span>
+              <span>{project.token.price + " cspr"}</span>
             </div>
             <div>
               Cap
               <br />
               <span>
-                {!info ? (
-                  <Skeleton height={20} />
-                ) : (
-                  (totalPresaleAmount * info.token.price).toLocaleString() +
-                  " cspr"
-                )}
+                {(totalPresaleAmount * project.token.price).toLocaleString() +
+                  " cspr"}
               </span>
             </div>
             <div>
@@ -132,21 +114,21 @@ export default function CasperCard({ project, status }) {
               <span>
                 Participants{" "}
                 <span style={{ color: "white", fontWeight: "bold" }}>
-                  {!info ? <Skeleton /> : participants}
+                  {loading ? <Skeleton /> : participants}
                 </span>
               </span>
             </div>
             <ProgressBar now={progressValue} variant="pro" />
             <div className="progress-title">
               <span style={{ color: "white", fontWeight: "bold" }}>
-                {!info ? (
+                {loading ? (
                   <Skeleton height={14} width={40} />
                 ) : (
                   progressValue.toFixed(2) + "%"
                 )}
               </span>
               <span style={{ color: "white", fontWeight: "bold" }}>
-                {!info ? (
+                {loading ? (
                   <Skeleton height={14} width={150} />
                 ) : (
                   soldAmount.toFixed(2) + "/" + totalPresaleAmount.toFixed(2)
@@ -158,16 +140,16 @@ export default function CasperCard({ project, status }) {
       </SkeletonTheme>
       <div className="custom-card-title">
         <div className="social-links">
-          <a href={info && info.links.webpackLink}>
+          <a href={project.links.site}>
             <SiWebpack className="social-link" />
           </a>
-          <a href={info && info.links.twitterLink}>
+          <a href={project.links.twitter}>
             <AiFillTwitterCircle className="social-link" />
           </a>
-          <a href={info && info.links.outlineLink}>
+          <a href={project.links.medium}>
             <AiOutlineMedium className="social-link" />
           </a>
-          <a href={info && info.links.telegramLink}>
+          <a href={project.links.telegram}>
             <FaTelegramPlane className="social-link" />
           </a>
         </div>

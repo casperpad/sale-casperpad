@@ -12,7 +12,6 @@ export default function Binance() {
   useEffect(() => {
     try {
       const result = getAddress(address);
-      console.log(result);
       setLoading(false);
     } catch (error) {
       navigate("/error");

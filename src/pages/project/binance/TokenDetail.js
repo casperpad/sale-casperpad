@@ -52,7 +52,7 @@ export default function TokenDetailNew(props) {
   async function fetchData() {
     try {
       const res = await fetch(
-        `${window.location.origin}/tiers/${CHAIN_ID}/${address}.json`
+        `${window.location.origin}/projects/ethereum/${CHAIN_ID}/${address}.json`
       );
       const data = await res.json();
       const investors = data.investors;
@@ -119,7 +119,6 @@ export default function TokenDetailNew(props) {
     const proof = getMerkleProof(investors, tier, account);
     const leaf = generateLeaf(account, tier[accountTier]);
     const verified = merkleTree.verify(proof, leaf, merkleRoot);
-    console.log(verified);
     return verified;
   }, [accountTier, investors, tier, account, merkleRoot]);
 
@@ -237,13 +236,13 @@ export default function TokenDetailNew(props) {
                       </div>
                       <div className="mt-3">
                         <div className="social-links">
-                          <a href={info.links.webpack}>
+                          <a href={info.links.site}>
                             <SiWebpack className="social-link" />
                           </a>
                           <a href={info.links.twitter}>
                             <AiFillTwitterCircle className="social-link" />
                           </a>
-                          <a href={info.links.outline}>
+                          <a href={info.links.medium}>
                             <AiOutlineMedium className="social-link" />
                           </a>
                           <a href={info.links.telegram}>

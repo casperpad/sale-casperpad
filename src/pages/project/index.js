@@ -8,7 +8,7 @@ export default function Project() {
   return (
     <>
       <Routes>
-        <Route path="/casper/:address" element={<CasperProject />} />
+        <Route path="/casper/:contractHash" element={<CasperProject />} />
         <Route path="/binance/:address" element={<BinanceProject />} />
       </Routes>
     </>

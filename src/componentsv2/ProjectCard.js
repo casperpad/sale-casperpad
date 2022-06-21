@@ -109,16 +109,16 @@ export default function BuyOnlyProjectCard({ project }) {
         </div>
         <div className="custom-card-title">
           <div className="social-links">
-            <a href={project.links.webpackLink}>
+            <a href={project.links.site}>
               <SiWebpack className="social-link" />
             </a>
-            <a href={project.links.twitterLink}>
+            <a href={project.links.twitter}>
               <AiFillTwitterCircle className="social-link" />
             </a>
-            <a href={project.links.outlineLink}>
+            <a href={project.links.medium}>
               <AiOutlineMedium className="social-link" />
             </a>
-            <a href={project.links.telegramLink}>
+            <a href={project.links.telegram}>
               <FaTelegramPlane className="social-link" />
             </a>
           </div>

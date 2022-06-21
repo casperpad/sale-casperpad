@@ -10,7 +10,6 @@ export default function ProjectDetailCASPER(props) {
   const {
     info,
     vestAmount,
-    schedules,
     isAdmin,
     openTime,
     totalPresaleAmount,
@@ -106,7 +105,7 @@ export default function ProjectDetailCASPER(props) {
                       </tr>
                     </thead>
                     <tbody>
-                      {schedules.map((schedule, index) => {
+                      {info.schedules.map((schedule, index) => {
                         return (
                           <ScheduleTable
                             key={`schedule_${index}`}

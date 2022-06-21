@@ -30,8 +30,8 @@ const ScheduleTable = (props) => {
   const currentTime = Date.now();
 
   useEffect(() => {
-    setTime(schedule[0].data.toNumber());
-    setPercentage(schedule[1].data.toNumber() / 100);
+    setTime(schedule.time);
+    setPercentage(schedule.percent);
     setScheduleAmount(((vestAmount / tokenPrice) * percentage) / 100);
   }, [percentage, schedule, tokenPrice, vestAmount]);
 

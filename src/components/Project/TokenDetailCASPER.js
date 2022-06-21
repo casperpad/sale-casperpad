@@ -28,13 +28,13 @@ export default function TokenDetailNew(props) {
     progressValue,
     status,
     participants,
-    startTime,
-    endTime,
     verified,
     proof,
     contractAddress,
     fetchData,
   } = props;
+
+  const { startTime, endTime } = info;
 
   const currentTime = new Date().getTime();
   const [isOpen, setIsOpen] = useState(false);
@@ -126,8 +126,7 @@ export default function TokenDetailNew(props) {
                         className="btn btn-wallet wallet-connected"
                         onClick={connectWallet}
                       >
-                        {" "}
-                        Connect Wallet{" "}
+                        Connect Wallet
                       </button>
                     )}
 
@@ -162,13 +161,13 @@ export default function TokenDetailNew(props) {
                   </div>
                   <div className="mt-3">
                     <div className="social-links">
-                      <a href={info.links.webpack}>
+                      <a href={info.links.site}>
                         <SiWebpack className="social-link" />
                       </a>
                       <a href={info.links.twitter}>
                         <AiFillTwitterCircle className="social-link" />
                       </a>
-                      <a href={info.links.outline}>
+                      <a href={info.links.medium}>
                         <AiOutlineMedium className="social-link" />
                       </a>
                       <a href={info.links.telegram}>
