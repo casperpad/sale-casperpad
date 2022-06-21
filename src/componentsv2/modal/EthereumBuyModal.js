@@ -94,7 +94,7 @@ const EthereumBuyModal = (props) => {
       toast.info(`Transaction submitted ${tx.hash}`);
       await tx.wait();
 
-      toast.info("Vest Success");
+      toast.info("Vest added successfully");
     } catch (err) {
       console.error(err);
     }
@@ -155,7 +155,7 @@ const EthereumBuyModal = (props) => {
                   {loading ? (
                     <Skeleton />
                   ) : (
-                    <div>{`${payCurrnecyBalance} USD`}</div>
+                    <div className="ml-2">{`You have ${payCurrnecyBalance} USD`}</div>
                   )}
                 </div>
                 <div

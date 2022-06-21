@@ -780,6 +780,12 @@ button:focus {
   display: flex;
   flex-direction: column;
 }
+.custom-card-type {
+  color: white;
+  position: relative;
+  left: -100px;
+  top: -10px;
+}
 .custom-card-header {
   display: flex;
   justify-content: flex-start;
@@ -1280,6 +1286,10 @@ div.fade.modal {
   background-color: #fec006;
 }
 
+.container {
+  /* align-items: center; */
+  justify-items: center;
+}
 .container > h2 {
   color: white !important;
 }

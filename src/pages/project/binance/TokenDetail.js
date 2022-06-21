@@ -153,11 +153,11 @@ export default function TokenDetailNew(props) {
         </>
       ) : (
         <>
-          <Container className="mb-5">
-            <Row>
-              <Col sm={5}>
-                <section className="mt-auto">
-                  <div className="toekn-detail-header d-flex mt-5">
+          <Container className="mt-5 mb-5">
+            <Col>
+              <Col>
+                <Row className="mt-auto">
+                  <Col className="toekn-detail-header d-flex mt-5">
                     <div className="tokenLogo mr-5">
                       <img src={info.links.logo} alt="project profile"></img>
                     </div>
@@ -166,8 +166,8 @@ export default function TokenDetailNew(props) {
                         {info.name}
                       </h2>
                     </div>
-                  </div>
-                  <div className="custom-card-header">
+                  </Col>
+                  <Col className="custom-card-header">
                     <div>
                       <div className="grid-box">
                         <div
@@ -252,10 +252,10 @@ export default function TokenDetailNew(props) {
                         </div>
                       </div>
                     </div>
-                  </div>
-                </section>
+                  </Col>
+                </Row>
               </Col>
-              <Col sm={7}>
+              <Col>
                 <SkeletonTheme baseColor="#ffffff10" highlightColor="#ffffff20">
                   <section className="custom-card-detail text-white">
                     <div className="grid-box">
@@ -305,7 +305,7 @@ export default function TokenDetailNew(props) {
                   </section>
                 </SkeletonTheme>
               </Col>
-            </Row>
+            </Col>
           </Container>
           <MyModal isOpen={isOpen} setIsOpen={setIsOpen} />
           <EthereumBuyModal

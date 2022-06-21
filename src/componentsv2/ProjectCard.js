@@ -29,6 +29,7 @@ export default function BuyOnlyProjectCard({ project }) {
       className="custom-card cursor-pointer"
       to={`/project/binance/${project.contractAddress}`}
     >
+      <div className="custom-card-type">BINANCE</div>
       <SkeletonTheme baseColor="#ffffff10" highlightColor="#ffffff20">
         <div className="custom-card-header">
           <div className="tokenLogo">

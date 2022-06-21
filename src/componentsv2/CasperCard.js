@@ -61,6 +61,7 @@ export default function CasperCard({ project, status }) {
         navigate(`/project/casper/${project.contractAddress}`);
       }}
     >
+      <div className="custom-card-type">CASPER</div>
       <SkeletonTheme baseColor="#ffffff10" highlightColor="#ffffff20">
         <div className="custom-card-header">
           {!info ? (
