@@ -2,8 +2,8 @@
   "info": {
     "name": "KUNFT Marketplace",
     "description": "Kunft is the first-ever NFT Marketplace that will be on Casper Network. At Kunft, art and the future collide to establish an unprecedented online gallery for passionate artists and art lovers.",
-    "startTime": 1655840400000,
-    "endTime": 1655844000000,
+    "startTime": 1655841600000,
+    "endTime": 1655852400000,
     "token": {
       "name": "KUNFT Token",
       "symbol": "KNFT",
@@ -13,31 +13,31 @@
     },
     "schedules": [
       {
-        "time": 1655845200000,
+        "time": 1655854200000,
         "percent": 5
       },
       {
-        "time": 1655846400000,
+        "time": 1655856000000,
         "percent": 15.8
       },
       {
-        "time": 1655847600000,
+        "time": 1655857800000,
         "percent": 15.8
       },
       {
-        "time": 1655848800000,
+        "time": 1655859600000,
         "percent": 15.8
       },
       {
-        "time": 1655850000000,
+        "time": 1655861400000,
         "percent": 15.8
       },
       {
-        "time": 1655851200000,
+        "time": 1655863200000,
         "percent": 15.8
       },
       {
-        "time": 1655852400000,
+        "time": 1655865000000,
         "percent": 16
       }
     ],

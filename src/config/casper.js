@@ -1,6 +1,6 @@
 export const casperProjects = {
   "casper-test": [
-    "dbd15ff8678d8137be83313d50c18493cf230e50abf2d3299f284ce10f962918",
+    "d72aa31849b74b0c62db2abd6307d2f777ef2da2a5674a5765fa84e0aae5755e",
   ],
   casper: [],
 };
