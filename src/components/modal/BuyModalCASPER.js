@@ -237,7 +237,7 @@ const BuyModal = (props) => {
                     >
                       <div className="text-white m-auto">
                         {" "}
-                        Vest Successfully!{" "}
+                        Vest added successfully!{" "}
                       </div>
                     </div>
                     <div

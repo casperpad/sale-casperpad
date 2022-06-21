@@ -17,7 +17,6 @@ export default function Projects() {
   const [binanceProjectsClosed, setBinanceProjectsClosed] = useState([]);
 
   useEffect(() => {
-    console.log(binanceProjects);
     async function fetchCasperData() {
       const project = {
         contractAddress: "aaaaaaaaaaaaaaaaa",
@@ -73,7 +72,6 @@ export default function Projects() {
             };
           })
         );
-        console.log(fetchedProjectsInfo);
         const comings = fetchedProjectsInfo.filter(
           (project) => Date.now() <= project.startTime
         );

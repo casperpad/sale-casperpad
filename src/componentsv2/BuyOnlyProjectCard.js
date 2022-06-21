@@ -27,6 +27,7 @@ export default function BuyOnlyProjectCard({ project, status }) {
       className="custom-card cursor-pointer"
       onClick={() => naviagte(`/project/binance/${project.address}`)}
     >
+      <div className="custom-card-type">BINANCE</div>
       <SkeletonTheme baseColor="#ffffff10" highlightColor="#ffffff20">
         <div className="custom-card-header">
           <div className="tokenLogo">
