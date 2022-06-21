@@ -1,12 +1,12 @@
 {
   "info": {
-    "name": "The Swappery",
-    "description": "The Coolest and First Dex on Casper network",
-    "startTime": 1655470253652,
-    "endTime": 1655570253652,
+    "name": "Kunft Marketplace",
+    "description": "The NFT Marketplace on Casper network",
+    "startTime": 1655730495000,
+    "endTime": 1655902800000,
     "token": {
-      "name": "Test Swappery Token",
-      "symbol": "tSWPR",
+      "name": "KNFT",
+      "symbol": "KNFT",
       "decimals": 9,
       "capacity": "100000",
       "price": 0.5
