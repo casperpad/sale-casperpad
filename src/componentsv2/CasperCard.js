@@ -82,7 +82,7 @@ export default function CasperCard({ project, status }) {
                 style={{ fontSize: ".6rem", verticalAlign: "middle" }}
               />
               {status === "Coming"
-                ? " Opens in Cspr"
+                ? "Coming"
                 : status === "Opened"
                 ? " Opened"
                 : " Closed"}
