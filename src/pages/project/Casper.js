@@ -63,8 +63,6 @@ export default function Casper() {
     );
     const proof = tree.getProof(leaf);
 
-    console.log(leaf, proof);
-
     setProof(proof);
 
     return tree.verify(proof, leaf, rootTocheck);
@@ -148,13 +146,15 @@ export default function Casper() {
 
       const publicKey = CLPublicKey.fromHex(casperAddress);
 
-      const promises = info.schedules.map(async (schedule, index) => {
-        return await casperpadClient
-          .claim_of(getAccountHashString(casperAddress), schedule.time)
-          .catch((err) => {
-            return 0;
-          });
-      });
+      const promises = await Promise.all(
+        info.schedules.map(async (schedule) => {
+          return casperpadClient
+            .claim_of(getAccountHashString(casperAddress), schedule.time)
+            .catch((err) => {
+              return 0;
+            });
+        })
+      );
 
       const [balance, vestAmount, claimed] = await Promise.all([
         erc20Client.balanceOf(publicKey).catch((err) => {
@@ -167,6 +167,8 @@ export default function Casper() {
           }),
         promises,
       ]);
+
+      console.log(claimed);
 
       setScheduleClaimed(claimed);
       setVestAmount(vestAmount.val.data / 10 ** 9);

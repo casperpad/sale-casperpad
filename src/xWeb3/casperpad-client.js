@@ -33,8 +33,6 @@ class CasperpadClient extends CasperContractClient {
         "pay_token",
         "claims",
         "creator",
-        "factory_contract",
-        "info",
         "launch_time",
         "merkle_root",
         "orders",

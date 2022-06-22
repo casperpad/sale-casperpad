@@ -80,20 +80,16 @@ const ScheduleTable = (props) => {
             <Skeleton />
           ) : (
             (pending && <Spinner animation="border" />) ||
-            (currentTime >= time &&
-              scheduleClaimed === 0 &&
-              verified &&
-              vestAmount && (
-                <>
-                  <button
-                    className="btn btn-wallet wallet-connected"
-                    onClick={() => handleClaim()}
-                  >
-                    {" "}
-                    Claim{" "}
-                  </button>
-                </>
-              )) ||
+            (currentTime >= time && scheduleClaimed === 0 && vestAmount && (
+              <>
+                <button
+                  className="btn btn-wallet wallet-connected"
+                  onClick={() => handleClaim()}
+                >
+                  Claim
+                </button>
+              </>
+            )) ||
             (currentTime >= time && "unlocked") ||
             "waiting..."
           )}
