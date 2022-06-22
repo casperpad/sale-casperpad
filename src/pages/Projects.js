@@ -17,6 +17,7 @@ export default function Projects() {
 
   useEffect(() => {
     async function fetchCasperData() {
+      console.log(CASPER_CHAIN);
       const fetchedProjectsInfo = await Promise.all(
         casperProjects[CASPER_CHAIN].map(async (contractHash) => {
           const res = await fetch(

@@ -98,7 +98,9 @@ export default function CasperCard({ project, status }) {
             <div>
               Token Price
               <br />
-              <span>{project.token.price + " cspr"}</span>
+              <span>
+                {parseFloat(project.token.price).toFixed(2) + " cspr"}
+              </span>
             </div>
             <div>
               Cap
