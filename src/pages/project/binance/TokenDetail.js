@@ -27,7 +27,7 @@ import { CHAIN_ID } from "../../../util/web3React";
 import { getMerkleProof, generateLeaves, generateLeaf } from "./merkletree";
 
 export default function TokenDetailNew(props) {
-  const { status } = props;
+  const status = "Opened";
   const address = useParams().address;
   const [info, setInfo] = useState();
   const [loading, setLoading] = useState(true);
@@ -124,8 +124,8 @@ export default function TokenDetailNew(props) {
   }, [accountTier, investors, tier, account, merkleRoot]);
 
   const progressValue = useMemo(() => {
-    return 0;
-  }, []);
+    return (participants / investors.length) * 100;
+  }, [participants, investors]);
 
   const accountAllocation = useMemo(() => {
     if (tier[accountTier] === undefined || accountVestedAmount === undefined)
@@ -195,7 +195,7 @@ export default function TokenDetailNew(props) {
                             }}
                           />
                           {status}
-                        </span>{" "}
+                        </span>
                         &nbsp;
                         <span className="status">BUSD</span> &nbsp;
                         <span className="status">USDC</span>
@@ -284,7 +284,7 @@ export default function TokenDetailNew(props) {
                         <div className="progress-title">
                           <span>Progress</span>
                           <span>
-                            Participants{" "}
+                            Participants
                             <span
                               style={{ color: "white", fontWeight: "bold" }}
                             >
@@ -295,13 +295,11 @@ export default function TokenDetailNew(props) {
                         <ProgressBar now={progressValue} variant="pro" />
                         <div className="progress-title">
                           <span style={{ color: "white", fontWeight: "bold" }}>
-                            {progressValue.toFixed(5)}%
+                            {progressValue.toFixed(2)}%
                           </span>
-                          <span style={{ color: "white", fontWeight: "bold" }}>
-                            {/* {soldAmount.toFixed(5) +
-                          "/" +
-                          totalPresaleAmount.toFixed(5)} */}
-                          </span>
+                          <span
+                            style={{ color: "white", fontWeight: "bold" }}
+                          ></span>
                         </div>
                       </div>
                     </div>

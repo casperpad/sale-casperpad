@@ -19,8 +19,8 @@ export default function BuyOnlyProjectCard({ project, status }) {
   const { participants, loading } = useBuyOnlyContract(project.address);
 
   const progressValue = useMemo(() => {
-    return (soldAmount / totalPresaleAmount) * 100;
-  }, [totalPresaleAmount, soldAmount]);
+    return (participants / project.totalUsers) * 100;
+  }, [project, participants]);
 
   return (
     <button
@@ -77,7 +77,7 @@ export default function BuyOnlyProjectCard({ project, status }) {
             <div>
               Cap
               <br />
-              <span>{project.token.capacity}</span>
+              <span>${project.token.capacity}</span>
             </div>
             <div>
               Access
@@ -105,10 +105,10 @@ export default function BuyOnlyProjectCard({ project, status }) {
             ) : (
               <div className="progress-title">
                 <span style={{ color: "white", fontWeight: "bold" }}>
-                  {progressValue}%
+                  {progressValue.toFixed(2)}%
                 </span>
                 <span style={{ color: "white", fontWeight: "bold" }}>
-                  {soldAmount + "/" + totalPresaleAmount}
+                  {participants + "/" + project.totalUsers}
                 </span>
               </div>
             )}

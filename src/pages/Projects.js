@@ -27,6 +27,7 @@ export default function Projects() {
           return {
             contractHash: contractHash,
             ...data.info,
+            totalUsers: data.investors.length,
           };
         })
       );
@@ -58,6 +59,7 @@ export default function Projects() {
               address: project.address,
               isBuyOnly: project.isBuyOnly,
               ...data.info,
+              totalUsers: data.investors.length,
             };
           })
         );

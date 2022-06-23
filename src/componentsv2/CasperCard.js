@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
+import { BigNumber, parseFixed } from "@ethersproject/bignumber";
 
 import {
   SiWebpack,
@@ -33,12 +34,10 @@ export default function CasperCard({ project, status }) {
 
         setParticipants(response[1].toNumber());
 
-        const totalPresaleAmount = response[0] / 10 ** project.token.decimals;
-        setTotalPresaleAmount(response[0] / 10 ** project.token.decimals);
+        setTotalPresaleAmount(project.token.capacity);
 
-        const soldAmount = response[2] / 10 ** 9 / project.token.price;
         setSoldAmount(response[2] / 10 ** 9 / project.token.price);
-        setProgressValue((soldAmount * 100) / totalPresaleAmount);
+        setProgressValue((response[1].toNumber() * 100) / project.totalUsers);
         setLoading(false);
       } catch (err) {
         fetchData();
@@ -106,8 +105,10 @@ export default function CasperCard({ project, status }) {
               Cap
               <br />
               <span>
-                {(totalPresaleAmount * project.token.price).toLocaleString() +
-                  " cspr"}
+                {BigNumber.from(project.token.capacity)
+                  .mul(parseFixed(project.token.price.toString(), 9))
+                  .div(parseFixed("1", project.token.decimals))
+                  .toString() + " cspr"}
               </span>
             </div>
             <div>
@@ -120,7 +121,7 @@ export default function CasperCard({ project, status }) {
             <div className="progress-title">
               <span>Progress</span>
               <span>
-                Participants{" "}
+                Participants
                 <span style={{ color: "white", fontWeight: "bold" }}>
                   {loading ? <Skeleton /> : participants}
                 </span>
@@ -139,7 +140,7 @@ export default function CasperCard({ project, status }) {
                 {loading ? (
                   <Skeleton height={14} width={150} />
                 ) : (
-                  soldAmount.toFixed(2) + "/" + totalPresaleAmount.toFixed(2)
+                  participants + "/" + project.totalUsers
                 )}
               </span>
             </div>
