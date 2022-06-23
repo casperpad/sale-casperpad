@@ -135,8 +135,7 @@ export default function ProjectDetailCASPER(props) {
                             className="btn btn-wallet wallet-connected"
                             disabled
                           >
-                            {" "}
-                            <BiMoney /> Presale {info.token.symbol} Deposit{" "}
+                            <BiMoney /> Presale {info.token.symbol} Deposit
                           </button>
                         </div>
                       </Col>
@@ -146,8 +145,7 @@ export default function ProjectDetailCASPER(props) {
                             className="btn btn-wallet wallet-connected"
                             disabled
                           >
-                            {" "}
-                            <BiKey /> Withdraw Remain Token{" "}
+                            <BiKey /> Withdraw Remain Token
                           </button>
                         </div>
                       </Col>

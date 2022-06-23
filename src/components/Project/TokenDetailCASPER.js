@@ -32,6 +32,7 @@ export default function TokenDetailNew(props) {
     proof,
     contractAddress,
     fetchData,
+    totalUsers,
   } = props;
 
   const { startTime, endTime } = info;
@@ -246,12 +247,10 @@ export default function TokenDetailNew(props) {
                     <ProgressBar now={progressValue} variant="pro" />
                     <div className="progress-title">
                       <span style={{ color: "white", fontWeight: "bold" }}>
-                        {progressValue.toFixed(5)}%
+                        {progressValue.toFixed(2)}%
                       </span>
                       <span style={{ color: "white", fontWeight: "bold" }}>
-                        {soldAmount.toFixed(5) +
-                          "/" +
-                          totalPresaleAmount.toFixed(5)}
+                        {participants + "/" + totalUsers}
                       </span>
                     </div>
                   </div>

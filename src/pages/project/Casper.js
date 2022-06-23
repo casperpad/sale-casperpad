@@ -103,13 +103,13 @@ export default function Casper() {
           : utils.toAccountHashString(response[4]);
       setTokenAddress(tokenAddress);
 
-      const totalPresaleAmount = response[1] / 10 ** info.token.decimals;
+      const totalPresaleAmount = info.token.capacity;
       setTotalPresaleAmount(totalPresaleAmount);
 
       const soldAmount = response[2] / 10 ** 9 / info.token.price;
       setSoldAmount(soldAmount);
       setParticipants(response[3].toNumber());
-      setProgressValue((soldAmount * 100) / totalPresaleAmount);
+      setProgressValue((response[3].toNumber() * 100) / data.investors.length);
 
       if (Date.now() < info.startTime) setStatus("Coming");
       else if (Date.now() < info.endTime) setStatus("Opened");
@@ -207,6 +207,7 @@ export default function Casper() {
         proof={proof}
         contractAddress={contractHash}
         fetchData={fetchData}
+        totalUsers={whitelist.length}
       />
       <ProjectDetailCASPER
         info={info}
