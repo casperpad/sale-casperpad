@@ -5,7 +5,7 @@ import Spinner from "react-bootstrap/Spinner";
 import { Toast } from "react-bootstrap";
 
 import useNetworkStatus from "../../store/useNetworkStatus";
-import { initClient } from "../../xWeb3";
+import { initPublicClient } from "../../xWeb3";
 
 import { CasperClient } from "casper-js-sdk";
 import { NODE_ADDRESS } from "../../xWeb3/constants";
@@ -15,12 +15,11 @@ const BuyModal = (props) => {
     isOpen,
     setIsOpen,
     tokenSymbol,
-    tier,
     vestAmount,
-    verified,
-    proof,
     tokenPrice,
     contractAddress,
+    minAmount,
+    maxAmount,
     fetchData,
   } = props;
   const [isOpenVest, setIsOpenVest] = useState(false);
@@ -33,27 +32,26 @@ const BuyModal = (props) => {
   const { casperConnected, casperAddress } = useNetworkStatus();
 
   useEffect(() => {
+    if (!isOpen) return;
+    let min = minAmount - vestAmount;
+    min = min > 0 ? min : 0;
+    handleCsprChange(min);
+  }, [isOpen]);
+
+  useEffect(() => {
     if (!casperConnected) setIsOpen(false);
   }, [casperAddress]);
 
   const handleClose = () => setIsOpen(false);
   const handleCloseVest = () => setIsOpenVest(false);
 
-  useEffect(() => {
-    if (!isOpen) return;
-    handleCsprChange(tier - vestAmount);
-
-    if (!verified) {
-      setToastText("This wallet is not whitelisted");
-      setShowToast(true);
-      handleClose();
-    }
-  }, [isOpen]);
-
   const handleCsprChange = (val) => {
     if (val.length > 11) return;
     let csprAmount = Number(val);
-    if (val < 0 || val > tier - vestAmount) csprAmount = buyCsprAmount;
+    let min = minAmount - vestAmount;
+    let max = maxAmount - vestAmount;
+    min = min > 0 ? min : 0;
+    if (val < 0 || val > max) csprAmount = buyCsprAmount;
     setBuyCsprAmount(csprAmount);
     setBuyTokenAmount(csprAmount / tokenPrice);
   };
@@ -61,23 +59,33 @@ const BuyModal = (props) => {
   const handleTokenChange = (val) => {
     if (val.length > 11) return;
     let csprAmount = Number(val) * tokenPrice;
-    if (val < 0 || val > tier - vestAmount) csprAmount = buyCsprAmount;
+    let min = minAmount - vestAmount;
+    let max = maxAmount - vestAmount;
+    min = min > 0 ? min : 0;
+    if (val < 0 || val > max) csprAmount = buyCsprAmount;
     setBuyCsprAmount(csprAmount);
     setBuyTokenAmount(csprAmount / tokenPrice);
   };
 
   async function handleVest() {
+    let min = minAmount - vestAmount;
+    min = min > 0 ? min : 0;
+
+    if (buyCsprAmount < min) {
+      setToastText(`You have to vest more than ${min} CSPR!`);
+      setShowToast(true);
+      return;
+    }
+
     setBuyTokenAmount(Number(buyTokenAmount).toFixed(3));
     setBuyCsprAmount(Number(buyCsprAmount).toFixed(3));
 
     try {
       setLoading(true);
-      const casperpadClient = await initClient(contractAddress);
+      const casperpadClient = await initPublicClient(contractAddress);
       const deployHash = await casperpadClient.createOrder(
         casperAddress,
-        Number(buyCsprAmount) * 10 ** 9,
-        proof,
-        tier * 10 ** 9
+        Number(buyCsprAmount) * 10 ** 9
       );
       const interval = setInterval(async () => {
         const casperClient = new CasperClient(NODE_ADDRESS);
@@ -144,9 +152,13 @@ const BuyModal = (props) => {
                       className="c-list border-b px-3 py-2 d-flex align-items-center"
                     >
                       <div className="text-white m-auto">
-                        {" "}
-                        Your MAX buyable amount is: {tier -
-                          vestAmount}CSPR! <br />
+                        Your MIN buyable amount is:{" "}
+                        {minAmount - vestAmount > 0
+                          ? minAmount - vestAmount
+                          : 0}
+                        CSPR! <br />
+                        Your MAX buyable amount is: {maxAmount - vestAmount}
+                        CSPR! <br />
                       </div>
                     </div>
                     <div
@@ -160,8 +172,6 @@ const BuyModal = (props) => {
                           className="form-control"
                           type="number"
                           step={0.001}
-                          min={0}
-                          max={tier}
                           value={buyCsprAmount}
                           onChange={(e) => handleCsprChange(e.target.value)}
                         />

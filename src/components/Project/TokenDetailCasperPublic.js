@@ -12,7 +12,7 @@ import {
 } from "react-icons/all";
 import { ProgressBar } from "react-bootstrap";
 import MyModal from "../modal/Modal";
-import BuyModal from "../modal/BuyModalCASPER";
+import BuyModal from "../modal/BuyModalCasperPublic";
 import { Container, Row, Col } from "react-bootstrap";
 
 import useNetworkStatus from "../../store/useNetworkStatus";
@@ -21,18 +21,16 @@ export default function TokenDetailNew(props) {
   const {
     info,
     balance,
-    tier,
     vestAmount,
     totalPresaleAmount,
     soldAmount,
     progressValue,
     status,
     participants,
-    verified,
-    proof,
     contractAddress,
+    minAmount,
+    maxAmount,
     fetchData,
-    totalUsers,
   } = props;
 
   const { startTime, endTime } = info;
@@ -133,8 +131,7 @@ export default function TokenDetailNew(props) {
                       </button>
                     )}
 
-                    {(tier > 0 &&
-                      casperConnected &&
+                    {(casperConnected &&
                       startTime > 0 &&
                       !userDataLoading &&
                       currentTime <= endTime &&
@@ -147,8 +144,7 @@ export default function TokenDetailNew(props) {
                           <BiMoney /> Buy {info.token.symbol} (WhiteList){" "}
                         </button>
                       )) ||
-                      (tier > 0 &&
-                        casperConnected &&
+                      (casperConnected &&
                         startTime > 0 &&
                         currentTime <= endTime &&
                         currentTime < startTime && (
@@ -203,9 +199,7 @@ export default function TokenDetailNew(props) {
                   {userDataLoading ? (
                     <Skeleton />
                   ) : (
-                    (tier > 0 && (
-                      <div> {(tier - vestAmount).toFixed(2) + " CSPR"} </div>
-                    )) || <div> This wallet is not whitelisted </div>
+                    <div> {(maxAmount - vestAmount).toFixed(2) + " CSPR"} </div>
                   )}
                 </div>
                 <hr className="bg-gray-100" />
@@ -250,7 +244,9 @@ export default function TokenDetailNew(props) {
                         {progressValue.toFixed(2)}%
                       </span>
                       <span style={{ color: "white", fontWeight: "bold" }}>
-                        {participants + "/" + totalUsers}
+                        {soldAmount.toFixed(2) +
+                          "/" +
+                          totalPresaleAmount.toFixed(2)}
                       </span>
                     </div>
                   </div>
@@ -264,14 +260,12 @@ export default function TokenDetailNew(props) {
       <BuyModal
         isOpen={isOpenBuy}
         setIsOpen={setIsOpenBuy}
-        onlyOneToast={false}
-        tier={tier}
         vestAmount={vestAmount}
         tokenPrice={info.token.price}
         tokenSymbol={info.token.symbol}
-        verified={verified}
-        proof={proof}
         contractAddress={contractAddress}
+        minAmount={minAmount}
+        maxAmount={maxAmount}
         fetchData={fetchData}
       />
     </>

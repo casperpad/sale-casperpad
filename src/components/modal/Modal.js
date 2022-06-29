@@ -33,10 +33,14 @@ const MyModal = ({ isOpen, setIsOpen, onlyOneToast }) => {
   }
 
   async function handleConnectWalletCasper() {
-    const address = await Signer.getActivePublicKey().catch((error) => {
-      Signer.sendConnectionRequest();
-    });
-    setCasperAddress(address);
+    try {
+      const address = await Signer.getActivePublicKey().catch((error) => {
+        Signer.sendConnectionRequest();
+      });
+      setCasperAddress(address);
+    } catch (err) {
+      setShowToast(true);
+    }
     handleClose();
   }
 
@@ -196,9 +200,7 @@ const MyModal = ({ isOpen, setIsOpen, onlyOneToast }) => {
           <strong className="me-auto">Notice</strong>
           <small className="mr-auto"></small>
         </Toast.Header>
-        <Toast.Body>
-          Your wallet must connect to the Binance Smart Chain!
-        </Toast.Body>
+        <Toast.Body>You must install Casper Signer in your Browser!</Toast.Body>
       </Toast>
     </>
   );

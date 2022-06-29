@@ -14,7 +14,8 @@ const EthereumBuyModal = (props) => {
     handleClose,
     tokenSymbol,
     tokenPrice,
-    accountAllocation,
+    minAccountAllocation,
+    maxAccountAllocation,
     handleAddVest,
     payToken,
     contractAddress,
@@ -73,6 +74,7 @@ const EthereumBuyModal = (props) => {
   }, [allowanceAmount, payTokenAmount, decimals, tokenDataLoading]);
 
   const handleAddVestOnClick = useCallback(async () => {
+    if (payTokenAmount < minAccountAllocation) return;
     try {
       // if allowanceAmount < tokenAmount require approve
       if (shouldApprovePayToken) {
@@ -99,13 +101,14 @@ const EthereumBuyModal = (props) => {
       console.error(err);
     }
   }, [
-    shouldApprovePayToken,
-    contractAddress,
     payTokenAmount,
-    decimals,
+    minAccountAllocation,
+    shouldApprovePayToken,
     handleAddVest,
     payCurrency,
+    decimals,
     approve,
+    contractAddress,
   ]);
 
   return (
@@ -134,7 +137,11 @@ const EthereumBuyModal = (props) => {
                   className="c-list border-b px-3 py-2 d-flex align-items-center"
                 >
                   <div className="text-white m-auto">
-                    Your MAX buyable amount is: {accountAllocation} USD!
+                    Your MIN buyable amount is:{" "}
+                    {minAccountAllocation.toFixed(2)} USD!
+                    <br />
+                    Your MAX buyable amount is:{" "}
+                    {maxAccountAllocation.toFixed(2)} USD!
                     <br />
                   </div>
                 </div>
@@ -169,12 +176,12 @@ const EthereumBuyModal = (props) => {
                       type="number"
                       step={0.001}
                       min={0}
-                      max={parseFloat(accountAllocation)}
+                      max={parseFloat(maxAccountAllocation)}
                       value={payTokenAmount}
                       onChange={(e) => {
                         if (e.target.value.length > 10) return;
                         const value = parseFloat(e.target.value);
-                        const allocation = parseFloat(accountAllocation);
+                        const allocation = parseFloat(maxAccountAllocation);
                         if (value > allocation || value < 0) return;
                         setPayTokenAmount(e.target.value);
                       }}

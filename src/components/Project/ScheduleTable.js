@@ -15,7 +15,6 @@ const ScheduleTable = (props) => {
     tokenSymbol,
     tokenPrice,
     vestAmount,
-    verified,
     fetchData,
     scheduleClaimed,
   } = props;

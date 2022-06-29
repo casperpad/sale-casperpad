@@ -1,4 +1,5 @@
 import CasperpadClient from "./casperpad-client";
+import CasperpadPublicClient from "./casperpad-public-client";
 import FactoryClient from "./factory-client";
 import { NODE_ADDRESS, CHAIN_NAME, FACTORY_CONTRACT_HASH } from "./constants";
 
@@ -14,6 +15,18 @@ export const initFactoryClient = async () => {
 
 export const initClient = async (contractHash) => {
   const casperpadClient = new CasperpadClient(
+    NODE_ADDRESS,
+    CHAIN_NAME,
+    undefined
+  );
+  // await casperpadClient.setContractHash(contractHash);
+  await casperpadClient.setContractHash(contractHash);
+
+  return casperpadClient;
+};
+
+export const initPublicClient = async (contractHash) => {
+  const casperpadClient = new CasperpadPublicClient(
     NODE_ADDRESS,
     CHAIN_NAME,
     undefined
