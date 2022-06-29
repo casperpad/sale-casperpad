@@ -11,20 +11,15 @@ import {
 import { toast } from "react-toastify";
 import { useWeb3React } from "@web3-react/core";
 import { useParams } from "react-router-dom";
-import { BigNumber } from "@ethersproject/bignumber";
-import { formatUnits } from "@ethersproject/units";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import { ProgressBar } from "react-bootstrap";
-import { MerkleTree } from "merkletreejs";
-import keccak256 from "keccak256";
 
-import useBuyOnlyContract from "@hooks/binance/buyOnly";
+import useBuyOnlyContract from "@hooks/binance/buyOnlyPublic";
 import EthereumBuyModal from "@components/modal/EthereumBuyModal";
 import MyModal from "../../../components/modal/Modal";
 import Loading from "../../../components/Project/Loading";
 import { Container, Row, Col } from "react-bootstrap";
 import { CHAIN_ID } from "../../../util/web3React";
-import { getMerkleProof, generateLeaves, generateLeaf } from "./merkletree";
 
 export default function TokenDetailNew(props) {
   const status = "Opened";
@@ -32,11 +27,14 @@ export default function TokenDetailNew(props) {
   const [info, setInfo] = useState();
   const [loading, setLoading] = useState(true);
   const [loaded, setLoaded] = useState(true);
-  const [tier, setTier] = useState(0);
-  const [investors, setInvestors] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const [isOpenBuy, setIsOpenBuy] = useState(false);
   const [accountVestedAmount, setAccountVestedAmount] = useState();
+  const [soldAmount, setSoldAmount] = useState(0);
+  const [totalPresaleAmount, setTotalPresaleAmount] = useState(0);
+  const [progressValue, setProgressValue] = useState(0);
+  const [minAccountAllocation, setMinAccountAllocation] = useState(0);
+  const [maxAccountAllocation, setMaxAccountAllocation] = useState(0);
 
   const { account, active } = useWeb3React();
   const {
@@ -47,20 +45,20 @@ export default function TokenDetailNew(props) {
     merkleRoot,
     vestedAmount,
     addVest,
+    minAmount,
+    maxAmount,
   } = useBuyOnlyContract(address);
 
   async function fetchData() {
+    setLoading(true);
+    setLoaded(false);
     try {
       const res = await fetch(
         `${window.location.origin}/projects/ethereum/${CHAIN_ID}/${address}.json`
       );
       const data = await res.json();
-      const investors = data.investors;
-      const tier = data.tier;
 
       await fetchAccountVestedAmount();
-      setTier(tier);
-      setInvestors(investors);
 
       setInfo(data.info);
       setLoading(false);
@@ -83,6 +81,17 @@ export default function TokenDetailNew(props) {
   }, [account, vestedAmount]);
 
   useEffect(() => {
+    let min = minAmount - Number(accountVestedAmount);
+    let max = maxAmount - Number(accountVestedAmount);
+    min /= 10 ** 18;
+    max /= 10 ** 18;
+    min = min > 0 ? min : 0;
+    max = max > 0 ? max : 0;
+    setMinAccountAllocation(min);
+    setMaxAccountAllocation(max);
+  }, [minAmount, maxAmount, accountVestedAmount]);
+
+  useEffect(() => {
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -94,13 +103,8 @@ export default function TokenDetailNew(props) {
 
   async function handleAddVest(payCurrency, amount) {
     try {
-      const proof = getMerkleProof(investors, tier, account);
-      const tx = await addVest(
-        proof,
-        amount,
-        payCurrency,
-        BigNumber.from(tier[accountTier])
-      );
+      console.log(payCurrency);
+      const tx = await addVest(amount, payCurrency);
       return tx;
     } catch (err) {
       toast.error(err.message);
@@ -108,33 +112,14 @@ export default function TokenDetailNew(props) {
   }
   const currentTime = Date.now();
 
-  const accountTier = useMemo(() => {
-    return investors.find((investor) => investor.address === account)?.tier;
-  }, [account, investors]);
-
-  const whitelisted = useMemo(() => {
-    if (accountTier === undefined || merkleRoot === undefined) return false;
-    const leaves = generateLeaves(investors, tier);
-    const merkleTree = new MerkleTree(leaves, keccak256, { sort: true });
-    const proof = getMerkleProof(investors, tier, account);
-    const leaf = generateLeaf(account, tier[accountTier]);
-    const verified = merkleTree.verify(proof, leaf, merkleRoot);
-    return verified;
-  }, [accountTier, investors, tier, account, merkleRoot]);
-
-  const progressValue = useMemo(() => {
-    return (participants / investors.length) * 100;
-  }, [participants, investors]);
-
-  const accountAllocation = useMemo(() => {
-    if (tier[accountTier] === undefined || accountVestedAmount === undefined)
-      return undefined;
-    const accountTierAmount = BigNumber.from(tier[accountTier]);
-    const available = accountTierAmount.sub(
-      BigNumber.from(accountVestedAmount)
-    );
-    return formatUnits(available, 18);
-  }, [accountVestedAmount, accountTier, tier]);
+  useEffect(() => {
+    let total = 0;
+    if (info) total = info.token.capacity * info.token.price;
+    const sold = totalVested / 10 ** 18;
+    setTotalPresaleAmount(total);
+    setSoldAmount(sold);
+    setProgressValue((sold * 100) / total);
+  }, [totalVested, info]);
 
   const isSaleTime = useMemo(() => {
     return true;
@@ -212,16 +197,13 @@ export default function TokenDetailNew(props) {
                         )}
 
                         {isSaleTime ? (
-                          whitelisted ? (
-                            <button
-                              className="btn btn-wallet wallet-connected mr-4 mb-2"
-                              onClick={() => setIsOpenBuy(true)}
-                            >
-                              <BiMoney /> Buy {info.token.symbol} (WhiteList)
-                            </button>
-                          ) : null
+                          <button
+                            className="btn btn-wallet wallet-connected mr-4 mb-2"
+                            onClick={() => setIsOpenBuy(true)}
+                          >
+                            <BiMoney /> Buy {info.token.symbol} (WhiteList)
+                          </button>
                         ) : (
-                          accountTier > 0 &&
                           active &&
                           info.startTime > 0 &&
                           currentTime <= info.endTime &&
@@ -268,10 +250,8 @@ export default function TokenDetailNew(props) {
                       <div style={{ paddingRight: "3rem" }}>-</div>
                       {loading ? (
                         <Skeleton />
-                      ) : accountAllocation ? (
-                        <div>{accountAllocation + " USD"}</div>
                       ) : (
-                        <div> This wallet is not whitelisted </div>
+                        <div>{maxAccountAllocation.toFixed(2) + " USD"}</div>
                       )}
                     </div>
                     <hr className="bg-gray-100" />
@@ -296,9 +276,9 @@ export default function TokenDetailNew(props) {
                           <span style={{ color: "white", fontWeight: "bold" }}>
                             {progressValue.toFixed(2)}%
                           </span>
-                          <span
-                            style={{ color: "white", fontWeight: "bold" }}
-                          ></span>
+                          <span style={{ color: "white", fontWeight: "bold" }}>
+                            {soldAmount + "/" + totalPresaleAmount}
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -312,11 +292,10 @@ export default function TokenDetailNew(props) {
             isOpen={isOpenBuy}
             payToken={info.payToken}
             handleClose={() => setIsOpenBuy(false)}
-            minAccountAllocation={0}
-            maxAccountAllocation={accountAllocation}
+            minAccountAllocation={minAccountAllocation}
+            maxAccountAllocation={maxAccountAllocation}
             tokenPrice={info.token.price}
             tokenSymbol={info.token.symbol}
-            proof={getMerkleProof(investors, tier, account)}
             contractAddress={address}
             handleAddVest={handleAddVest}
           />

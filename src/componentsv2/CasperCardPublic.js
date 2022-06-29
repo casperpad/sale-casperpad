@@ -34,10 +34,13 @@ export default function CasperCard({ project, status }) {
 
         setParticipants(response[1].toNumber());
 
-        setTotalPresaleAmount(project.token.capacity);
+        const totalPresaleAmount = project.token.capacity;
+        setTotalPresaleAmount(totalPresaleAmount);
 
-        setSoldAmount(response[2] / 10 ** 9 / project.token.price);
-        setProgressValue((response[1].toNumber() * 100) / project.totalUsers);
+        const soldAmount = response[2] / 10 ** 9 / project.token.price;
+        setSoldAmount(soldAmount);
+
+        setProgressValue((soldAmount * 100) / totalPresaleAmount);
         setLoading(false);
       } catch (err) {
         fetchData();
@@ -52,7 +55,7 @@ export default function CasperCard({ project, status }) {
     <button
       className="custom-card cursor-pointer"
       onClick={() => {
-        navigate(`/project/casper/private/${project.contractHash}`);
+        navigate(`/project/casper/public/${project.contractHash}`);
       }}
     >
       <div className="custom-card-type">CASPER</div>
@@ -140,7 +143,9 @@ export default function CasperCard({ project, status }) {
                 {loading ? (
                   <Skeleton height={14} width={150} />
                 ) : (
-                  participants + "/" + project.totalUsers
+                  soldAmount.toFixed(2) +
+                  "/" +
+                  Number(totalPresaleAmount).toFixed(2)
                 )}
               </span>
             </div>

@@ -17,17 +17,17 @@ export default function Projects() {
 
   useEffect(() => {
     async function fetchCasperData() {
-      console.log(CASPER_CHAIN);
       const fetchedProjectsInfo = await Promise.all(
-        casperProjects[CASPER_CHAIN].map(async (contractHash) => {
+        casperProjects[CASPER_CHAIN].map(async (project) => {
           const res = await fetch(
-            `${window.location.origin}/projects/casper/${CASPER_CHAIN}/${contractHash}.json`
+            `${window.location.origin}/projects/casper/${CASPER_CHAIN}/${project.address}.json`
           );
           const data = await res.json();
           return {
-            contractHash: contractHash,
+            contractHash: project.address,
+            isPublic: project.isPublic,
             ...data.info,
-            totalUsers: data.investors.length,
+            totalUsers: data.investors ? data.investors.length : 0,
           };
         })
       );
@@ -58,8 +58,9 @@ export default function Projects() {
             return {
               address: project.address,
               isBuyOnly: project.isBuyOnly,
+              isPublic: project.isPublic,
               ...data.info,
-              totalUsers: data.investors.length,
+              totalUsers: data.investors ? data.investors.length : 0,
             };
           })
         );

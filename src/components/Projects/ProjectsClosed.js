@@ -1,6 +1,8 @@
 import React from "react";
 import CasperCard from "@components/CasperCard";
+import CasperCardPublic from "@components/CasperCardPublic";
 import BuyOnlyProjectCard from "@components/BuyOnlyProjectCard";
+import BuyOnlyProjectCardPublic from "@components/BuyOnlyProjectCardPublic";
 import ProjectCard from "@components/ProjectCard";
 
 export default function ProjectsClosed({
@@ -14,14 +16,24 @@ export default function ProjectsClosed({
       </h1>
       <section className="projects">
         {binanceProjects.map((project) => {
-          if (project.isBuyOnly)
-            return (
-              <BuyOnlyProjectCard
-                key={project.address}
-                project={project}
-                status={"Closed"}
-              />
-            );
+          if (project.isBuyOnly) {
+            if (project.isPublic)
+              return (
+                <BuyOnlyProjectCardPublic
+                  key={project.address + "public"}
+                  project={project}
+                  status={"Closed"}
+                />
+              );
+            else
+              return (
+                <BuyOnlyProjectCard
+                  key={project.address + "private"}
+                  project={project}
+                  status={"Closed"}
+                />
+              );
+          }
           return (
             <ProjectCard
               key={project.address}
@@ -31,9 +43,15 @@ export default function ProjectsClosed({
           );
         })}
         {casperProjects.map((project, index) => {
-          return (
+          return project.isPublic ? (
+            <CasperCardPublic
+              key={project.contractHash + "public"}
+              project={project}
+              status={"Closed"}
+            />
+          ) : (
             <CasperCard
-              key={`casperclosed_${index}`}
+              key={project.contractHash + "private"}
               project={project}
               status={"Closed"}
             />

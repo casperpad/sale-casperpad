@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   SiWebpack,
@@ -10,22 +10,29 @@ import {
 import { ProgressBar } from "react-bootstrap";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import useBuyOnlyContract from "@hooks/binance/buyOnly";
+import useBuyOnlyContract from "@hooks/binance/buyOnlyPublic";
 
 export default function BuyOnlyProjectCard({ project, status }) {
-  const [totalPresaleAmount, setTotalPresaleAmount] = useState(0);
+  const [progressValue, setProgressValue] = useState(0);
   const [soldAmount, setSoldAmount] = useState(0);
+  const [totalPresaleAmount, setTotalPresaleAmount] = useState(0);
   const naviagte = useNavigate();
-  const { participants, loading } = useBuyOnlyContract(project.address);
+  const { totalVested, participants, loading } = useBuyOnlyContract(
+    project.address
+  );
 
-  const progressValue = useMemo(() => {
-    return (participants / project.totalUsers) * 100;
-  }, [project, participants]);
+  useEffect(() => {
+    const totalPresaleAmount = project.token.capacity * project.token.price;
+    const soldAmount = totalVested / 10 ** 18;
+    setTotalPresaleAmount(totalPresaleAmount);
+    setSoldAmount(soldAmount);
+    setProgressValue((soldAmount / totalPresaleAmount) * 100);
+  }, [project, totalVested]);
 
   return (
     <button
       className="custom-card cursor-pointer"
-      onClick={() => naviagte(`/project/binance/private/${project.address}`)}
+      onClick={() => naviagte(`/project/binance/public/${project.address}`)}
     >
       <div className="custom-card-type">BINANCE</div>
       <SkeletonTheme baseColor="#ffffff10" highlightColor="#ffffff20">
@@ -108,7 +115,7 @@ export default function BuyOnlyProjectCard({ project, status }) {
                   {progressValue.toFixed(2)}%
                 </span>
                 <span style={{ color: "white", fontWeight: "bold" }}>
-                  {participants + "/" + project.totalUsers}
+                  {soldAmount + "/" + totalPresaleAmount}
                 </span>
               </div>
             )}

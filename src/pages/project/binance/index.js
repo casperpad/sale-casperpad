@@ -3,10 +3,12 @@ import { useNavigate, useParams } from "react-router-dom";
 import { getAddress } from "@ethersproject/address";
 import ProjectDetail from "./ProjectDetail";
 import TokenDetail from "./TokenDetail";
+import TokenDetailPublic from "./TokenDetailPublic";
 import Loading from "../../../components/Project/Loading";
 
 export default function Binance() {
   const address = useParams().address;
+  const state = useParams().state;
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   useEffect(() => {
@@ -18,11 +20,22 @@ export default function Binance() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  if (loading) return <Loading loading={loading} loaded={true} />;
+
   return (
     <>
-      <TokenDetail />
-      <ProjectDetail />
+      {loading ? (
+        <Loading loading={loading} loaded={true} />
+      ) : state === "public" ? (
+        <>
+          <TokenDetailPublic />
+          <ProjectDetail />
+        </>
+      ) : (
+        <>
+          <TokenDetail />
+          <ProjectDetail />
+        </>
+      )}
     </>
   );
 }
