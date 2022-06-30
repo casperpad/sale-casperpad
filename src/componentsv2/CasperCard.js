@@ -114,7 +114,7 @@ export default function CasperCard({ project, status }) {
             <div>
               Access
               <br />
-              <span>Public</span>
+              <span>Private</span>
             </div>
           </div>
           <div className="custom-progress-bar">

@@ -201,7 +201,7 @@ export default function TokenDetailNew(props) {
                             className="btn btn-wallet wallet-connected mr-4 mb-2"
                             onClick={() => setIsOpenBuy(true)}
                           >
-                            <BiMoney /> Buy {info.token.symbol} (WhiteList)
+                            <BiMoney /> Buy {info.token.symbol}
                           </button>
                         ) : (
                           active &&

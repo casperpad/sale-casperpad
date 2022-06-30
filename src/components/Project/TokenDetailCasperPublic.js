@@ -141,7 +141,7 @@ export default function TokenDetailNew(props) {
                           onClick={() => handleBuyToken()}
                         >
                           {" "}
-                          <BiMoney /> Buy {info.token.symbol} (WhiteList){" "}
+                          <BiMoney /> Buy {info.token.symbol}{" "}
                         </button>
                       )) ||
                       (casperConnected &&
