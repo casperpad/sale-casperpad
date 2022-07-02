@@ -1,0 +1,54 @@
+{
+  "info": {
+    "name": "KUNFT Marketplace",
+    "description": "Kunft is the first-ever NFT Marketplace that will be on Casper Network. At Kunft, art and the future collide to establish an unprecedented online gallery for passionate artists and art lovers.",
+    "startTime": 1655974800000,
+    "endTime": 1658707200000,
+    "token": {
+      "name": "KUNFT Token",
+      "symbol": "KNFT",
+      "decimals": 9,
+      "capacity": "35000000",
+      "price": 5
+    },
+    "schedules": [
+      {
+        "time": 1658700000000,
+        "percent": 5
+      },
+      {
+        "time": 1661378400000,
+        "percent": 15.8
+      },
+      {
+        "time": 1664056800000,
+        "percent": 15.8
+      },
+      {
+        "time": 1666648800000,
+        "percent": 15.8
+      },
+      {
+        "time": 1669327200000,
+        "percent": 15.8
+      },
+      {
+        "time": 1671919200000,
+        "percent": 15.8
+      },
+      {
+        "time": 1674597600000,
+        "percent": 16
+      }
+    ],
+    "links": {
+      "logo": "https://assets.coingecko.com/coins/images/24260/small/output-onlinepngtools.png?1647170874",
+      "site": "https://kunftmarketplace.io/",
+      "twitter": "https://twitter.com/KunftMarket",
+      "medium": "https://casperpad.medium.com/casperpads-first-ever-casper-native-ido-kunft-marketplace-a9fbb953f7ec",
+      "telegram": "https://t.me/CasperPadPublic"
+    }
+  },
+  "minOrderAmount": "800",
+  "maxOrderAmount": "160000"
+}

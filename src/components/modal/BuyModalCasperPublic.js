@@ -153,13 +153,14 @@ const BuyModal = (props) => {
                     >
                       <div className="text-white m-auto">
                         {minAmount > vestAmount &&
-                          `Your MIN buyable amount is:{" "}
+                          `Your MIN buyable amount is:
                         ${
                           minAmount - vestAmount > 0
                             ? minAmount - vestAmount
                             : 0
                         }
-                        CSPR!` + <br />}
+                        CSPR!`}
+                        {minAmount > vestAmount && <br />}
                         Your MAX buyable amount is: {maxAmount - vestAmount}
                         CSPR! <br />
                       </div>

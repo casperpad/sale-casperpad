@@ -138,9 +138,9 @@ const EthereumBuyModal = (props) => {
                 >
                   <div className="text-white m-auto">
                     {minAccountAllocation &&
-                      `Your MIN buyable amount is:{" "}
+                      `Your MIN buyable amount is:
                     ${minAccountAllocation.toFixed(2)} USD!`}
-                    <br />
+                    {minAccountAllocation && <br />}
                     Your MAX buyable amount is:{" "}
                     {maxAccountAllocation.toFixed(2)} USD!
                     <br />

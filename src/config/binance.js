@@ -5,6 +5,11 @@ const binanceProjects = {
       isBuyOnly: true,
       isPublic: false,
     },
+    {
+      address: "0x86daaBBa7B87EDf1d1E732190bFbb78c6DE486f6",
+      isBuyOnly: true,
+      isPublic: true,
+    },
   ],
   97: [
     {

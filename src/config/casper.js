@@ -17,6 +17,11 @@ export const casperProjects = {
         "74764b918573d0572fe949c434c295204d4d4afa70e067b9bb21082306da8e87",
       isPublic: false,
     },
+    {
+      address:
+        "365eada56830d84afb71bce8385249873ac0a0e3105ddda4714427914b1280fb",
+      isPublic: true,
+    },
   ],
 };
 
