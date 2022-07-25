@@ -313,7 +313,7 @@ export default function TokenDetailNew(props) {
             payToken={info.payToken}
             handleClose={() => setIsOpenBuy(false)}
             minAccountAllocation={0}
-            maxAccountAllocation={accountAllocation}
+            maxAccountAllocation={accountAllocation || 0}
             tokenPrice={info.token.price}
             tokenSymbol={info.token.symbol}
             proof={getMerkleProof(investors, tier, account)}
