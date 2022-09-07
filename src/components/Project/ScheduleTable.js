@@ -31,7 +31,7 @@ const ScheduleTable = (props) => {
   useEffect(() => {
     setTime(schedule.time);
     setPercentage(schedule.percent);
-    setScheduleAmount(((vestAmount / tokenPrice) * percentage) / 100);
+    setScheduleAmount((vestAmount * percentage) / 100);
   }, [percentage, schedule, tokenPrice, vestAmount]);
 
   const handleClaim = async () => {

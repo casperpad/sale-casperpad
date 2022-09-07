@@ -2,25 +2,8 @@ export const casperProjects = {
   "casper-test": [
     {
       address:
-        "54172ffe59ff8c2c1ae307f4672215522fe2608d252e197381ccbb8b88853038",
+        "c804df92bbd3301add71ab43e4506b62bd440c55a0eba6eccfd145d8feff71cd",
       isPublic: false,
-    },
-    {
-      address:
-        "6fe3d97d5b5fcfb3890f470f6da71439eaf0bd3ba0e3cb4ab043cee414b6de11",
-      isPublic: true,
-    },
-  ],
-  casper: [
-    {
-      address:
-        "74764b918573d0572fe949c434c295204d4d4afa70e067b9bb21082306da8e87",
-      isPublic: false,
-    },
-    {
-      address:
-        "365eada56830d84afb71bce8385249873ac0a0e3105ddda4714427914b1280fb",
-      isPublic: true,
     },
   ],
 };
